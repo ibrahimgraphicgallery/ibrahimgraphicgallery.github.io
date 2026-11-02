@@ -19,10 +19,10 @@ a{color:inherit}
 header.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:12px}
 .brand{font:800 18px/1.2 var(--serif)}
 .contact{font-size:15px;text-decoration:none;border:1.5px solid var(--green);color:var(--green);padding:6px 14px;border-radius:999px}
-.hero{margin:8px 0 8px;padding:56px 32px;border-radius:6px 28px 6px 28px;color:#fff;background:linear-gradient(rgba(6,30,22,.6),rgba(6,30,22,.8)),url(hero.jpg) center/cover no-repeat,linear-gradient(160deg,#14573F,#0A2E22)}
-@media (max-width:560px){.hero{padding:36px 20px}}
-.hero h1{font:800 clamp(34px,7vw,60px)/1.25 var(--serif);letter-spacing:-.01em}
-.hero p{color:rgba(255,255,255,.88);margin-top:14px;max-width:52ch}
+.banner{margin-top:8px;aspect-ratio:16/7;border-radius:6px 28px 6px 28px;background:url(hero.jpg) center/cover no-repeat,linear-gradient(160deg,#14573F,#0A2E22)}
+.hero{padding:30px 0 12px}
+.hero h1{font:800 clamp(26px,4.6vw,44px)/1.45 var(--serif);max-width:24em}
+.hero p{color:var(--mut);margin-top:14px;max-width:52ch}
 .tabs{display:flex;gap:8px;overflow-x:auto;padding:18px 0 0;border-bottom:2px solid var(--line);scrollbar-width:none}
 .tab{flex:none;font:500 16px var(--sans);color:var(--mut);background:transparent;border:2px solid transparent;border-bottom:0;padding:9px 18px 11px;border-radius:14px 14px 0 0;cursor:pointer;margin-bottom:-2px}
 .tab[aria-selected=true]{background:var(--card);color:var(--ink);border-color:var(--line);border-bottom:2px solid var(--card)}
@@ -63,9 +63,10 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
     <div class="brand" id="brand"></div>
     <a class="contact" id="wa" target="_blank" rel="noopener">WhatsApp-এ যোগাযোগ</a>
   </header>
+  <div class="banner" role="img" aria-label="Ibrahim Ahmad Sadi"></div>
   <section class="hero">
-    <h1>ডিজাইন দেখুন, ফাইল নিন</h1>
-    <p>Illustrator, Photoshop আর মাহফিল পোস্টারের ডিজাইন। ফ্রি ফাইল সরাসরি ডাউনলোড করুন। পেইড ফাইল bKash বা Nagad-এ পেমেন্ট করে পেয়ে যান।</p>
+    <h1>ইব্রাহীম গ্রাফিক্স গ্যালারিতে পেয়ে যাচ্ছেন নান্দনিক সব ডিজাইন, সহজে হাতের মুঠোয়</h1>
+    <p>ডিজাইনের কাজ সহজ করুন, তৈরিকৃত Illustrator ও Photoshop ফাইল নিন।</p>
   </section>
   <div class="tabs" id="tabs" role="tablist" aria-label="ক্যাটাগরি"></div>
   <main class="grid" id="grid"></main>
