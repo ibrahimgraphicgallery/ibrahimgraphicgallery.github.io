@@ -23,7 +23,14 @@ header.top{display:flex;justify-content:space-between;align-items:center;padding
 .hero{padding:30px 0 12px}
 .hero h1{font:800 clamp(26px,4.6vw,44px)/1.45 var(--serif);max-width:24em}
 .hero p{color:var(--mut);margin-top:14px;max-width:52ch}
-.tabs{display:flex;gap:8px;overflow-x:auto;padding:18px 0 0;border-bottom:2px solid var(--line);scrollbar-width:none}
+.tabwrap{position:relative}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:18px 0 0;border-bottom:2px solid var(--line);scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs.drag{cursor:grabbing}
+.arr{position:absolute;top:18px;bottom:2px;width:40px;border:0;cursor:pointer;font:600 26px/1 var(--sans);color:var(--green);display:flex;align-items:center;z-index:2}
+.arr.l{left:0;justify-content:flex-start;background:linear-gradient(90deg,var(--bg) 55%,transparent)}
+.arr.r{right:0;justify-content:flex-end;background:linear-gradient(270deg,var(--bg) 55%,transparent)}
+.arr[hidden]{display:none}
 .tab{flex:none;font:500 16px var(--sans);color:var(--mut);background:transparent;border:2px solid transparent;border-bottom:0;padding:9px 18px 11px;border-radius:14px 14px 0 0;cursor:pointer;margin-bottom:-2px}
 .tab[aria-selected=true]{background:var(--card);color:var(--ink);border-color:var(--line);border-bottom:2px solid var(--card)}
 .tab span{color:var(--gold);font-size:14px;margin-left:6px}
@@ -68,7 +75,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
     <h1>ইব্রাহীম গ্রাফিক্স গ্যালারিতে পেয়ে যাচ্ছেন নান্দনিক সব ডিজাইন, সহজে হাতের মুঠোয়</h1>
     <p>ডিজাইনের কাজ সহজ করুন, তৈরিকৃত Illustrator ও Photoshop ফাইল নিন।</p>
   </section>
-  <div class="tabs" id="tabs" role="tablist" aria-label="ক্যাটাগরি"></div>
+  <div class="tabwrap">
+    <button class="arr l" id="al" type="button" aria-label="বামে যান" hidden>‹</button>
+    <div class="tabs" id="tabs" role="tablist" aria-label="ক্যাটাগরি"></div>
+    <button class="arr r" id="ar" type="button" aria-label="ডানে যান">›</button>
+  </div>
   <main class="grid" id="grid"></main>
   <footer id="foot"></footer>
 </div>
@@ -118,11 +129,36 @@ $("foot").textContent = "© " + new Date().getFullYear() + " " + SITE.name + ". 
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function count(c){return c===CATEGORIES[0]?DESIGNS.length:DESIGNS.filter(d=>d.category===c).length}
 
-function renderTabs(){
-  $("tabs").innerHTML = CATEGORIES.map(c=>
-    `<button class="tab" role="tab" aria-selected="${c===current}" data-c="${esc(c)}">${esc(c)}<span>${count(c)}</span></button>`).join("");
-  $("tabs").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{current=b.dataset.c;renderTabs();renderGrid()});
+let moved=false;
+function updArr(){
+  const t=$("tabs"),max=t.scrollWidth-t.clientWidth;
+  $("al").hidden=t.scrollLeft<=2;
+  $("ar").hidden=t.scrollLeft>=max-2;
 }
+function renderTabs(){
+  const t=$("tabs"),keep=t.scrollLeft;
+  t.innerHTML = CATEGORIES.map(c=>
+    `<button class="tab" role="tab" aria-selected="${c===current}" data-c="${esc(c)}">${esc(c)}<span>${count(c)}</span></button>`).join("");
+  t.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{if(moved)return;current=b.dataset.c;renderTabs();renderGrid()});
+  t.scrollLeft=keep;updArr();
+}
+(function(){
+  const t=$("tabs");let down=false,sx=0,sl=0;
+  t.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")return;down=true;moved=false;sx=e.clientX;sl=t.scrollLeft});
+  window.addEventListener("pointermove",e=>{
+    if(!down)return;const dx=e.clientX-sx;
+    if(Math.abs(dx)>5){moved=true;t.classList.add("drag")}
+    if(moved)t.scrollLeft=sl-dx;
+  });
+  window.addEventListener("pointerup",()=>{down=false;t.classList.remove("drag");setTimeout(()=>{moved=false},0)});
+  t.addEventListener("wheel",e=>{
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){t.scrollLeft+=e.deltaY;e.preventDefault()}
+  },{passive:false});
+  t.addEventListener("scroll",updArr);
+  window.addEventListener("resize",updArr);
+  $("al").onclick=()=>t.scrollBy({left:-240,behavior:"smooth"});
+  $("ar").onclick=()=>t.scrollBy({left:240,behavior:"smooth"});
+})();
 
 function pv(d,cls){
   return `<img src="${esc(d.preview||"")}" alt="${esc(d.title)}" loading="lazy" onerror="this.remove()"><b>${esc(d.title)}</b>`;
