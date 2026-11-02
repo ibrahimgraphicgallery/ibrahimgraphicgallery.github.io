@@ -204,8 +204,9 @@ function renderGrid(){
   const list = current===CATEGORIES[0]?DESIGNS:DESIGNS.filter(d=>d.category===current);
   $("grid").innerHTML = list.length ? list.map(d=>{
     const i = DESIGNS.indexOf(d);
+    const dlText = (d.downloads||0) > 0 ? `<br><span class="dl">↓ ${d.downloads} ডাউনলোড</span>` : "";
     return `<button class="card" data-i="${i}"><div class="pv">${pv(d)}</div>
-    <div class="meta"><div><strong>${esc(d.title)}</strong><br><span class="dl">↓ ${d.downloads||0} ডাউনলোড</span></div>
+    <div class="meta"><div><strong>${esc(d.title)}</strong>${dlText}</div>
     <span class="tag ${d.price?"paid":"free"}">${d.price?"৳ "+d.price:"ফ্রি"}</span></div></button>`}).join("")
     : `<p class="empty">এই ক্যাটাগরিতে এখনো কোনো ডিজাইন নেই।</p>`;
   $("grid").querySelectorAll(".card").forEach(b=>b.onclick=()=>openDesign(DESIGNS[b.dataset.i]));
