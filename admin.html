@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>অ্যাডমিন – ডিজাইন আপলোড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF3EE;--ink:#0E2A22;--mut:#4F6A60;--card:#fff;--line:#CFDCD3;--green:#14573F;--on:#fff;--red:#B3261E}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#0D1A15;--ink:#E8F1EB;--mut:#9DB5A9;--card:#14261F;--line:#27413A;--green:#5FCB9C;--on:#0D1A15;--red:#FF8A80}}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 "Hind Siliguri",system-ui,sans-serif;padding:env(safe-area-inset-top,0px) 16px 40px}
+.box{max-width:560px;margin:24px auto;background:var(--card);border:1px solid var(--line);border-radius:6px 22px 6px 22px;padding:22px}
+h1,h2{font-family:"Noto Serif Bengali",Georgia,serif;font-weight:800;line-height:1.4;margin-bottom:10px}
+h1{font-size:26px}h2{font-size:20px}
+label{display:block;margin-top:12px;font-size:15px;color:var(--mut)}
+input,select{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.chk{display:flex;gap:8px;align-items:center;color:var(--ink)}.chk input{width:auto}
+button{font:600 17px inherit;font-family:inherit;background:var(--green);color:var(--on);border:0;border-radius:12px;padding:12px 22px;cursor:pointer;margin-top:16px}
+button.alt{background:transparent;color:var(--green);border:2px solid var(--green);margin:0}
+.msg{margin-top:12px;color:var(--mut)}.err{color:var(--red)}
+.row{display:flex;gap:12px;align-items:center;border-top:1px solid var(--line);padding:12px 0}
+.row img{width:56px;height:70px;object-fit:cover;border-radius:6px;background:var(--line)}
+.row div{flex:1;min-width:0}
+.del{background:transparent;color:var(--red);border:1.5px solid var(--red);margin:0;padding:6px 14px;font-size:15px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+:focus-visible{outline:3px solid #E3B24A;outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="box" id="login" hidden>
+  <h1>অ্যাডমিন লগইন</h1>
+  <form id="lf">
+    <label for="em">ইমেইল</label><input id="em" type="email" autocomplete="username" required>
+    <label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password" required>
+    <button type="submit">লগইন করুন</button>
+    <p class="msg err" id="le" role="alert"></p>
+  </form>
+</div>
+
+<div id="panel" hidden>
+  <div class="box">
+    <div class="top"><h1>নতুন ডিজাইন আপলোড</h1><button class="alt" id="out" type="button">লগআউট</button></div>
+    <form id="uf">
+      <label for="ti">ডিজাইনের নাম</label><input id="ti" required>
+      <label for="ca">ক্যাটাগরি</label><select id="ca"></select>
+      <label for="pr">দাম (টাকা)। ফ্রি হলে ০ লিখুন</label><input id="pr" type="number" min="0" value="0" required>
+      <div id="lkw"><label for="lk">ফ্রি ফাইলের ডাউনলোড লিংক (Google Drive/Mega)</label><input id="lk" type="url" placeholder="https://"></div>
+      <label for="no">ছোট বিবরণ (যেমন: AI ফাইল, এডিট করা যায়)</label><input id="no">
+      <label for="img">প্রিভিউ ছবি</label><input id="img" type="file" accept="image/*" required>
+      <label class="chk"><input type="checkbox" id="wm" checked> ছবিতে নামের ওয়াটারমার্ক লাগান</label>
+      <button type="submit">আপলোড করুন</button>
+      <p class="msg" id="msg" role="status"></p>
+    </form>
+  </div>
+  <div class="box"><h2>আপলোড করা ডিজাইন</h2><div id="list"></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const SITE_NAME = "IBRAHIM AHMAD SADI";
+const CATS = ["Illustrator ডিজাইন","Photoshop ডিজাইন","মাহফিল পোস্টার","অন্যান্য"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+if(!window.SUPABASE_URL || window.SUPABASE_URL.includes("YOUR_")){
+  document.body.innerHTML = '<div class="box"><h1>সেটআপ বাকি</h1><p>config.js ফাইলে Supabase-এর URL আর KEY বসাতে হবে।</p></div>';
+} else {
+const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+$("ca").innerHTML = CATS.map(c=>`<option>${esc(c)}</option>`).join("");
+
+function show(on){ $("login").hidden = on; $("panel").hidden = !on; if(on) loadList(); }
+sb.auth.getSession().then(({data})=>show(!!data.session));
+
+$("lf").onsubmit = async e => {
+  e.preventDefault();
+  const {error} = await sb.auth.signInWithPassword({email:$("em").value.trim(), password:$("pw").value});
+  if(error) $("le").textContent = "ইমেইল বা পাসওয়ার্ড ভুল।"; else show(true);
+};
+$("out").onclick = async () => { await sb.auth.signOut(); show(false); };
+$("pr").oninput = () => { $("lkw").hidden = (parseInt($("pr").value)||0) > 0; };
+
+function prep(file, wm){
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, 1200/Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      const x = c.getContext("2d");
+      x.drawImage(img, 0, 0, c.width, c.height);
+      if(wm){
+        x.save(); x.globalAlpha = .3; x.fillStyle = "#fff";
+        x.font = "bold " + Math.round(c.width/16) + "px sans-serif";
+        x.rotate(-Math.PI/6);
+        for(let y=-c.height; y<c.height*2; y+=c.width/4)
+          for(let p=-c.width; p<c.width*2; p+=c.width*.9) x.fillText(SITE_NAME, p, y);
+        x.restore();
+      }
+      c.toBlob(b => res(b), "image/jpeg", .82);
+    };
+    img.onerror = rej;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+$("uf").onsubmit = async e => {
+  e.preventDefault();
+  const m = $("msg"); m.className = "msg"; m.textContent = "আপলোড হচ্ছে, একটু অপেক্ষা করুন...";
+  try{
+    const blob = await prep($("img").files[0], $("wm").checked);
+    const path = Date.now() + ".jpg";
+    const up = await sb.storage.from("previews").upload(path, blob, {contentType:"image/jpeg"});
+    if(up.error) throw up.error;
+    const url = sb.storage.from("previews").getPublicUrl(path).data.publicUrl;
+    const price = parseInt($("pr").value) || 0;
+    const ins = await sb.from("designs").insert({
+      title:$("ti").value.trim(), category:$("ca").value, price,
+      note:$("no").value.trim(), link: price ? null : $("lk").value.trim(), preview:url
+    });
+    if(ins.error) throw ins.error;
+    m.textContent = "আপলোড হয়েছে! এখন সাইটে দেখা যাবে।";
+    $("uf").reset(); $("lkw").hidden = false; loadList();
+  }catch(err){ m.className = "msg err"; m.textContent = "সমস্যা হয়েছে: " + (err.message||err); }
+};
+
+async function loadList(){
+  const {data} = await sb.from("designs").select("*").order("created_at",{ascending:false});
+  $("list").innerHTML = (data||[]).map(d =>
+    `<div class="row"><img src="${esc(d.preview)}" alt=""><div><b>${esc(d.title)}</b><br><small>${esc(d.category)} · ${d.price?"৳ "+d.price:"ফ্রি"}</small></div>
+    <button class="del" type="button" data-id="${d.id}" data-p="${esc(d.preview)}">মুছুন</button></div>`).join("") || "<p>এখনো কোনো ডিজাইন নেই।</p>";
+  $("list").querySelectorAll(".del").forEach(b => b.onclick = async () => {
+    if(!confirm("এই ডিজাইনটা মুছে ফেলবেন?")) return;
+    await sb.storage.from("previews").remove([b.dataset.p.split("/").pop()]);
+    await sb.from("designs").delete().eq("id", b.dataset.id);
+    loadList();
+  });
+}
+}
+</script>
+</body>
+</html>

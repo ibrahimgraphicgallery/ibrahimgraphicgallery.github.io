@@ -77,6 +77,8 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
   <div class="dbody" id="dbody"></div>
 </dialog>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <script>
 /* ============================================================
    এখানে সব কিছু বদলানো যায়। শুধু এই অংশটুকু এডিট করুন।
@@ -94,7 +96,7 @@ const CATEGORIES = ["সব ডিজাইন", "Illustrator ডিজাইন
    preview: images ফোল্ডারের ছবির নাম (ছবি না থাকলে সবুজ ব্যাকগ্রাউন্ড দেখাবে)
    price: 0 হলে ফ্রি। দাম লিখলে পেইড (টাকায়)
    link: শুধু ফ্রি ফাইলের জন্য, Google Drive/Mega লিংক। পেইড ফাইলের লিংক এখানে দেবেন না */
-const DESIGNS = [
+let DESIGNS = [
   {title:"মাহফিল পোস্টার ১", category:"মাহফিল পোস্টার", price:150, preview:"images/mahfil-1.jpg", note:"AI ফাইল, এডিট করা যায়"},
   {title:"মাহফিল পোস্টার ২", category:"মাহফিল পোস্টার", price:0, preview:"images/mahfil-2.jpg", link:"https://drive.google.com/", note:"ফ্রি PSD ফাইল"},
   {title:"লোগো ডিজাইন সেট", category:"Illustrator ডিজাইন", price:200, preview:"images/logo-1.jpg", note:"AI ভেক্টর ফাইল"},
@@ -168,6 +170,11 @@ function openDesign(d){
 $("x").onclick=()=>$("dlg").close();
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
 renderTabs();renderGrid();
+if(window.SUPABASE_URL && !window.SUPABASE_URL.includes("YOUR_") && window.supabase){
+  window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_KEY)
+    .from("designs").select("*").order("created_at",{ascending:false})
+    .then(({data,error})=>{ if(!error&&data){DESIGNS=data;renderTabs();renderGrid()} });
+}
 </script>
 </body>
 </html>
