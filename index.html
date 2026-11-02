@@ -216,6 +216,7 @@ function countDl(d){
   if(sbc&&d.id!=null)sbc.rpc("increment_downloads",{design_id:String(d.id)}).then(()=>{},()=>{});
 }
 function openDesign(d){
+  const isCanva = d.category === "ক্যানভা প্রো অ্যাকাউন্ট";
   $("dpv").innerHTML = pv(d);
   let h = `<h3 id="dtitle">${esc(d.title)}</h3><p style="color:var(--mut)">${esc(d.category)}${d.note?" · "+esc(d.note):""}</p>`;
   if(!d.price){
@@ -223,11 +224,12 @@ function openDesign(d){
   } else {
     h += `<div class="pay"><p><strong>দাম: ৳ ${d.price}</strong></p>
     <ol><li>bKash বা Nagad থেকে <b>Send Money</b> করুন:<br><span class="num">${esc(SITE.number)}</span></li>
-    <li>নিচে আপনার নাম, নম্বর আর TrxID লিখুন</li>
-    <li>পেমেন্ট মিলিয়ে দেখে আমি ফাইলের লিংক পাঠিয়ে দেব</li></ol>
+    <li>${isCanva?"নিচে আপনার নাম, নম্বর, Gmail আর TrxID লিখুন":"নিচে আপনার নাম, নম্বর আর TrxID লিখুন"}</li>
+    <li>${isCanva?"পেমেন্ট মিলিয়ে দেখে আমি আপনার Gmail-এ ক্যানভা প্রো অ্যাক্সেস দিয়ে দেব":"পেমেন্ট মিলিয়ে দেখে আমি ফাইলের লিংক পাঠিয়ে দেব"}</li></ol>
     <button class="btn alt" id="cp" type="button">নম্বর কপি করুন</button>
     <label for="nm">আপনার নাম</label><input id="nm" autocomplete="name">
     <label for="ph">আপনার নম্বর</label><input id="ph" inputmode="tel" autocomplete="tel">
+    ${isCanva?`<label for="em">আপনার Gmail (এই ইমেইলেই ক্যানভা প্রো অ্যাক্সেস দেওয়া হবে)</label><input id="em" type="email" inputmode="email" autocomplete="email" placeholder="example@gmail.com">`:""}
     <label for="tx">TrxID</label><input id="tx" autocapitalize="characters">
     <button class="btn" id="send" type="button">WhatsApp-এ পাঠান</button>
     <p id="err" style="color:#B3261E;margin-top:8px" role="alert"></p></div>`;
@@ -240,8 +242,10 @@ function openDesign(d){
     $("cp").onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(SITE.number);$("cp").textContent="কপি হয়েছে"};
     $("send").onclick=()=>{
       const n=$("nm").value.trim(),p=$("ph").value.trim(),t=$("tx").value.trim();
-      if(!n||!p||!t){$("err").textContent="নাম, নম্বর আর TrxID তিনটাই লিখুন।";return}
-      const m=`আসসালামু আলাইকুম। আমি "${d.title}" (৳ ${d.price}) কিনতে চাই।\nনাম: ${n}\nনম্বর: ${p}\nTrxID: ${t}`;
+      const e=isCanva?$("em").value.trim():"";
+      if(!n||!p||!t||(isCanva&&!e)){$("err").textContent=isCanva?"নাম, নম্বর, Gmail আর TrxID চারটাই লিখুন।":"নাম, নম্বর আর TrxID তিনটাই লিখুন।";return}
+      if(isCanva&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){$("err").textContent="সঠিক Gmail লিখুন।";return}
+      const m=`আসসালামু আলাইকুম। আমি "${d.title}" (৳ ${d.price}) কিনতে চাই।\nনাম: ${n}\nনম্বর: ${p}\n${isCanva?"Gmail: "+e+"\n":""}TrxID: ${t}`;
       window.open("https://wa.me/"+SITE.whatsapp+"?text="+encodeURIComponent(m),"_blank");
       countDl(d);
     };
