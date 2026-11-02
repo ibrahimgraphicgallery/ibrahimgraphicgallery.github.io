@@ -83,13 +83,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
   <main class="grid" id="grid"></main>
   <footer id="foot"></footer>
 </div>
-
 <dialog id="dlg" aria-labelledby="dtitle">
   <button class="close" id="x" aria-label="বন্ধ করুন">×</button>
   <div class="dpv" id="dpv"></div>
   <div class="dbody" id="dbody"></div>
 </dialog>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
@@ -101,10 +99,8 @@ const SITE = {
   number: "01871979783",          // bKash / Nagad নম্বর (Send Money)
   whatsapp: "8801871979783"       // WhatsApp নম্বর, 880 দিয়ে শুরু
 };
-
 /* ক্যাটাগরি যোগ বা বাদ দিতে এই তালিকা বদলান */
 const CATEGORIES = ["সব ডিজাইন", "এডিটেবল Illustrator ফাইল", "এডিটেবল Photoshop ফাইল", "মাহফিল পোস্টার", "মাহফিলের দাওয়াত কার্ড", "ব্যানার ডিজাইন", "থাম্বনেইল ডিজাইন", "লোগো ডিজাইন", "বাংলা প্রিমিয়াম ফন্ট", "অন্যান্য"];
-
 /* নতুন ডিজাইন যোগ করতে একটা লাইন কপি করে বদলান।
    preview: images ফোল্ডারের ছবির নাম (ছবি না থাকলে সবুজ ব্যাকগ্রাউন্ড দেখাবে)
    price: 0 হলে ফ্রি। দাম লিখলে পেইড (টাকায়)
@@ -118,23 +114,29 @@ let DESIGNS = [
   {title:"ফটো ম্যানিপুলেশন", category:"এডিটেবল Photoshop ফাইল", price:120, preview:"images/photo-1.jpg", note:"PSD লেয়ার সহ"}
 ];
 /* ============================================================ */
-
 /* আগের আপলোড করা ডিজাইনের পুরনো ক্যাটাগরি নাম নতুন নামে দেখাবে */
 const OLD_NAMES = {
   "Illustrator ডিজাইন": "এডিটেবল Illustrator ফাইল",
   "Photoshop ডিজাইন": "এডিটেবল Photoshop ফাইল"
 };
-
 const $ = id => document.getElementById(id);
 let current = CATEGORIES[0];
-
+let sbc = null; /* Supabase client (ডাউনলোড গণনার জন্য) */
 $("brand").textContent = SITE.name;
 $("wa").href = "https://wa.me/" + SITE.whatsapp;
 $("foot").textContent = "© " + new Date().getFullYear() + " " + SITE.name + ". সব ডিজাইনের স্বত্ব সংরক্ষিত।";
-
+/* ডাউনলোড/অর্ডার গণনা: একই ব্রাউজার থেকে একই ডিজাইন একবারই গোনা হয় */
+function track(d,kind){
+  try{
+    if(!sbc||d.id==null)return;
+    const k="t_"+kind+"_"+d.id;
+    if(localStorage.getItem(k))return;
+    localStorage.setItem(k,"1");
+    sbc.rpc("track_design",{p_id:String(d.id),p_kind:kind}).then(()=>{},()=>{});
+  }catch(e){}
+}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function count(c){return c===CATEGORIES[0]?DESIGNS.length:DESIGNS.filter(d=>d.category===c).length}
-
 let moved=false;
 function updArr(){
   const t=$("tabs"),max=t.scrollWidth-t.clientWidth;
@@ -165,11 +167,9 @@ function renderTabs(){
   $("al").onclick=()=>t.scrollBy({left:-240,behavior:"smooth"});
   $("ar").onclick=()=>t.scrollBy({left:240,behavior:"smooth"});
 })();
-
 function pv(d,cls){
   return `<img src="${esc(d.preview||"")}" alt="${esc(d.title)}" loading="lazy" onerror="this.remove()"><b>${esc(d.title)}</b>`;
 }
-
 function renderGrid(){
   const list = current===CATEGORIES[0]?DESIGNS:DESIGNS.filter(d=>d.category===current);
   $("grid").innerHTML = list.length ? list.map(d=>{
@@ -180,12 +180,11 @@ function renderGrid(){
     : `<p class="empty">এই ক্যাটাগরিতে এখনো কোনো ডিজাইন নেই।</p>`;
   $("grid").querySelectorAll(".card").forEach(b=>b.onclick=()=>openDesign(DESIGNS[b.dataset.i]));
 }
-
 function openDesign(d){
   $("dpv").innerHTML = pv(d);
   let h = `<h3 id="dtitle">${esc(d.title)}</h3><p style="color:var(--mut)">${esc(d.category)}${d.note?" · "+esc(d.note):""}</p>`;
   if(!d.price){
-    h += `<a class="btn" href="${esc(d.link||"#")}" target="_blank" rel="noopener">ফ্রি ডাউনলোড করুন</a>`;
+    h += `<a class="btn" id="dl" href="${esc(d.link||"#")}" target="_blank" rel="noopener">ফ্রি ডাউনলোড করুন</a>`;
   } else {
     h += `<div class="pay"><p><strong>দাম: ৳ ${d.price}</strong></p>
     <ol><li>bKash বা Nagad থেকে <b>Send Money</b> করুন:<br><span class="num">${esc(SITE.number)}</span></li>
@@ -199,23 +198,24 @@ function openDesign(d){
     <p id="err" style="color:#B3261E;margin-top:8px" role="alert"></p></div>`;
   }
   $("dbody").innerHTML = h;
+  if(!d.price){ $("dl").onclick=()=>track(d,"download"); }
   if(d.price){
     $("cp").onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(SITE.number);$("cp").textContent="কপি হয়েছে"};
     $("send").onclick=()=>{
       const n=$("nm").value.trim(),p=$("ph").value.trim(),t=$("tx").value.trim();
       if(!n||!p||!t){$("err").textContent="নাম, নম্বর আর TrxID তিনটাই লিখুন।";return}
       const m=`আসসালামু আলাইকুম। আমি "${d.title}" (৳ ${d.price}) কিনতে চাই।\nনাম: ${n}\nনম্বর: ${p}\nTrxID: ${t}`;
+      track(d,"order");
       window.open("https://wa.me/"+SITE.whatsapp+"?text="+encodeURIComponent(m),"_blank");
     };
   }
   $("dlg").showModal();
 }
-
 $("x").onclick=()=>$("dlg").close();
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
 renderTabs();renderGrid();
 if(window.SUPABASE_URL && !window.SUPABASE_URL.includes("YOUR_") && window.supabase){
-  window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_KEY)
+  (sbc=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_KEY))
     .from("designs").select("*").order("created_at",{ascending:false})
     .then(({data,error})=>{ if(!error&&data){DESIGNS=data.map(d=>({...d,category:OLD_NAMES[d.category]||d.category}));renderTabs();renderGrid()} });
 }

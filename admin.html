@@ -38,7 +38,6 @@ button.alt{background:transparent;color:var(--green);border:2px solid var(--gree
     <p class="msg err" id="le" role="alert"></p>
   </form>
 </div>
-
 <div id="panel" hidden>
   <div class="box">
     <div class="top"><h1>নতুন ডিজাইন আপলোড</h1><button class="alt" id="out" type="button">লগআউট</button></div>
@@ -54,9 +53,8 @@ button.alt{background:transparent;color:var(--green);border:2px solid var(--gree
       <p class="msg" id="msg" role="status"></p>
     </form>
   </div>
-  <div class="box"><h2>আপলোড করা ডিজাইন</h2><div id="list"></div></div>
+  <div class="box"><h2>আপলোড করা ডিজাইন</h2><p class="msg" id="tot"></p><div id="list"></div></div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
@@ -69,10 +67,8 @@ if(!window.SUPABASE_URL || window.SUPABASE_URL.includes("YOUR_")){
 } else {
 const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 $("ca").innerHTML = CATS.map(c=>`<option>${esc(c)}</option>`).join("");
-
 function show(on){ $("login").hidden = on; $("panel").hidden = !on; if(on) loadList(); }
 sb.auth.getSession().then(({data})=>show(!!data.session));
-
 $("lf").onsubmit = async e => {
   e.preventDefault();
   const {error} = await sb.auth.signInWithPassword({email:$("em").value.trim(), password:$("pw").value});
@@ -80,7 +76,6 @@ $("lf").onsubmit = async e => {
 };
 $("out").onclick = async () => { await sb.auth.signOut(); show(false); };
 $("pr").oninput = () => { $("lkw").hidden = (parseInt($("pr").value)||0) > 0; };
-
 function prep(file, wm){
   return new Promise((res, rej) => {
     const img = new Image();
@@ -104,7 +99,6 @@ function prep(file, wm){
     img.src = URL.createObjectURL(file);
   });
 }
-
 $("uf").onsubmit = async e => {
   e.preventDefault();
   const m = $("msg"); m.className = "msg"; m.textContent = "আপলোড হচ্ছে, একটু অপেক্ষা করুন...";
@@ -124,12 +118,12 @@ $("uf").onsubmit = async e => {
     $("uf").reset(); $("lkw").hidden = false; loadList();
   }catch(err){ m.className = "msg err"; m.textContent = "সমস্যা হয়েছে: " + (err.message||err); }
 };
-
 async function loadList(){
   const {data} = await sb.from("designs").select("*").order("created_at",{ascending:false});
   $("list").innerHTML = (data||[]).map(d =>
-    `<div class="row"><img src="${esc(d.preview)}" alt=""><div><b>${esc(d.title)}</b><br><small>${esc(d.category)} · ${d.price?"৳ "+d.price:"ফ্রি"}</small></div>
+    `<div class="row"><img src="${esc(d.preview)}" alt=""><div><b>${esc(d.title)}</b><br><small>${esc(d.category)} · ${d.price?"৳ "+d.price:"ফ্রি"}</small><br><small><b>${d.price?"WhatsApp অর্ডার ক্লিক: "+(d.orders||0):"ডাউনলোড: "+(d.downloads||0)}</b></small></div>
     <button class="del" type="button" data-id="${d.id}" data-p="${esc(d.preview)}">মুছুন</button></div>`).join("") || "<p>এখনো কোনো ডিজাইন নেই।</p>";
+  $("tot").textContent = "মোট ফ্রি ডাউনলোড: " + (data||[]).reduce((s,d)=>s+(d.downloads||0),0) + " · মোট WhatsApp অর্ডার ক্লিক: " + (data||[]).reduce((s,d)=>s+(d.orders||0),0);
   $("list").querySelectorAll(".del").forEach(b => b.onclick = async () => {
     if(!confirm("এই ডিজাইনটা মুছে ফেলবেন?")) return;
     await sb.storage.from("previews").remove([b.dataset.p.split("/").pop()]);
