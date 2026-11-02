@@ -39,18 +39,20 @@ header.top{display:flex;justify-content:space-between;align-items:center;padding
 .card:hover{border-color:var(--gold)}
 .pv{aspect-ratio:4/5;background:linear-gradient(160deg,var(--green),#0A2E22);display:flex;align-items:flex-end;padding:14px;position:relative}
 .pv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.pv b{font:800 20px/1.3 var(--serif);color:#fff;position:relative}
+.pv b{font:800 20px/1.3 var(--serif);color:#fff;position:relative;display:none}
+.pv.noimg b,.dpv.noimg b{display:block}
 .meta{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;gap:8px}
 .meta strong{font-weight:600;font-size:16px}
 .tag{font-size:14px;font-weight:600;padding:2px 12px;border-radius:999px;white-space:nowrap}
 .free{background:var(--green);color:var(--on)}
 .paid{background:var(--goldbg);color:var(--gold)}
+.dl{display:inline-block;margin-top:4px;font:500 13px/1.6 var(--sans);color:var(--mut);background:var(--bg);border:1px solid var(--line);padding:0 10px;border-radius:999px}
 .empty{grid-column:1/-1;color:var(--mut);padding:40px 0}
 dialog{border:0;border-radius:18px;background:var(--card);color:var(--ink);width:min(560px,calc(100% - 28px));max-height:calc(100% - 28px);padding:0;overflow:auto}
 dialog::backdrop{background:rgba(5,20,14,.65)}
 .dpv{aspect-ratio:16/10;background:linear-gradient(160deg,var(--green),#0A2E22);position:relative;display:flex;align-items:flex-end;padding:18px}
 .dpv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.dpv b{font:800 24px/1.3 var(--serif);color:#fff;position:relative}
+.dpv b{font:800 24px/1.3 var(--serif);color:#fff;position:relative;display:none}
 .dbody{padding:20px}
 .dbody h3{font:800 20px/1.4 var(--serif);margin-bottom:6px}
 .btn{display:inline-block;font:600 17px var(--sans);background:var(--green);color:var(--on);border:0;border-radius:12px;padding:12px 22px;cursor:pointer;text-decoration:none;margin-top:12px}
@@ -141,6 +143,7 @@ const OLD_NAMES = {
   "Photoshop ডিজাইন": "এডিটেবল Photoshop ফাইল"
 };
 const $ = id => document.getElementById(id);
+const sbc = (window.SUPABASE_URL && !window.SUPABASE_URL.includes("YOUR_") && window.supabase) ? window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_KEY) : null;
 let current = CATEGORIES[0];
 $("brand").textContent = SITE.name;
 $("wa").href = "https://wa.me/" + SITE.whatsapp;
@@ -195,23 +198,27 @@ function renderTabs(){
   $("ar").onclick=()=>t.scrollBy({left:240,behavior:"smooth"});
 })();
 function pv(d,cls){
-  return `<img src="${esc(d.preview||"")}" alt="${esc(d.title)}" loading="lazy" onerror="this.remove()"><b>${esc(d.title)}</b>`;
+  return `<img src="${esc(d.preview||"")}" alt="${esc(d.title)}" loading="lazy" onerror="this.parentNode.classList.add('noimg');this.remove()"><b>${esc(d.title)}</b>`;
 }
 function renderGrid(){
   const list = current===CATEGORIES[0]?DESIGNS:DESIGNS.filter(d=>d.category===current);
   $("grid").innerHTML = list.length ? list.map(d=>{
     const i = DESIGNS.indexOf(d);
     return `<button class="card" data-i="${i}"><div class="pv">${pv(d)}</div>
-    <div class="meta"><strong>${esc(d.title)}</strong>
+    <div class="meta"><div><strong>${esc(d.title)}</strong><br><span class="dl">↓ ${d.downloads||0} ডাউনলোড</span></div>
     <span class="tag ${d.price?"paid":"free"}">${d.price?"৳ "+d.price:"ফ্রি"}</span></div></button>`}).join("")
     : `<p class="empty">এই ক্যাটাগরিতে এখনো কোনো ডিজাইন নেই।</p>`;
   $("grid").querySelectorAll(".card").forEach(b=>b.onclick=()=>openDesign(DESIGNS[b.dataset.i]));
+}
+function countDl(d){
+  d.downloads=(d.downloads||0)+1;renderGrid();
+  if(sbc&&d.id!=null)sbc.rpc("increment_downloads",{design_id:String(d.id)}).then(()=>{},()=>{});
 }
 function openDesign(d){
   $("dpv").innerHTML = pv(d);
   let h = `<h3 id="dtitle">${esc(d.title)}</h3><p style="color:var(--mut)">${esc(d.category)}${d.note?" · "+esc(d.note):""}</p>`;
   if(!d.price){
-    h += `<a class="btn" href="${esc(d.link||"#")}" target="_blank" rel="noopener">ফ্রি ডাউনলোড করুন</a>`;
+    h += `<a class="btn" id="dlb" href="${esc(d.link||"#")}" target="_blank" rel="noopener">ফ্রি ডাউনলোড করুন</a>`;
   } else {
     h += `<div class="pay"><p><strong>দাম: ৳ ${d.price}</strong></p>
     <ol><li>bKash বা Nagad থেকে <b>Send Money</b> করুন:<br><span class="num">${esc(SITE.number)}</span></li>
@@ -225,6 +232,9 @@ function openDesign(d){
     <p id="err" style="color:#B3261E;margin-top:8px" role="alert"></p></div>`;
   }
   $("dbody").innerHTML = h;
+  if(!d.price){
+    $("dlb").addEventListener("click",()=>countDl(d));
+  }
   if(d.price){
     $("cp").onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(SITE.number);$("cp").textContent="কপি হয়েছে"};
     $("send").onclick=()=>{
@@ -232,6 +242,7 @@ function openDesign(d){
       if(!n||!p||!t){$("err").textContent="নাম, নম্বর আর TrxID তিনটাই লিখুন।";return}
       const m=`আসসালামু আলাইকুম। আমি "${d.title}" (৳ ${d.price}) কিনতে চাই।\nনাম: ${n}\nনম্বর: ${p}\nTrxID: ${t}`;
       window.open("https://wa.me/"+SITE.whatsapp+"?text="+encodeURIComponent(m),"_blank");
+      countDl(d);
     };
   }
   $("dlg").showModal();
@@ -239,9 +250,8 @@ function openDesign(d){
 $("x").onclick=()=>$("dlg").close();
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
 renderTabs();renderGrid();
-if(window.SUPABASE_URL && !window.SUPABASE_URL.includes("YOUR_") && window.supabase){
-  window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_KEY)
-    .from("designs").select("*").order("created_at",{ascending:false})
+if(sbc){
+  sbc.from("designs").select("*").order("created_at",{ascending:false})
     .then(({data,error})=>{ if(!error&&data){DESIGNS=data.map(d=>({...d,category:OLD_NAMES[d.category]||d.category}));renderTabs();renderGrid()} });
 }
 </script>
