@@ -65,12 +65,12 @@ input{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1.5px 
 .connect::after{content:"";position:absolute;right:-60px;bottom:-60px;width:220px;height:220px;border-radius:50%;border:2px solid rgba(227,178,74,.28);box-shadow:0 0 0 22px rgba(227,178,74,.07);pointer-events:none}
 .connect h2{font:800 clamp(22px,3.6vw,32px)/1.5 var(--serif);max-width:20em;position:relative}
 .connect>p{margin-top:8px;color:rgba(255,255,255,.82);max-width:50ch;position:relative}
-.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px;position:relative;z-index:1}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:26px;position:relative;z-index:1}
 .lk{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:6px 20px 6px 20px;padding:14px 16px;transition:transform .2s,border-color .2s,background .2s}
 .lk:hover{transform:translateY(-3px);border-color:#E3B24A;background:rgba(255,255,255,.14)}
 .ico{flex:none;width:48px;height:48px;border-radius:14px;display:grid;place-items:center}
 .ico svg{width:26px;height:26px;fill:#fff}
-.lk b{display:block;font:600 17px/1.3 var(--sans)}
+.lk b{display:block;font:600 16px/1.3 var(--sans)}
 .lk small{display:block;font-size:14px;color:rgba(255,255,255,.78);letter-spacing:.02em}
 .lk .go{margin-left:auto;font-size:22px;color:#E3B24A}
 @media (prefers-reduced-motion:reduce){.lk{transition:none}.lk:hover{transform:none}}
@@ -117,7 +117,8 @@ const SITE = {
   number: "01871979783",          // bKash / Nagad নম্বর (Send Money)
   whatsapp: "8801871979783",      // WhatsApp নম্বর, 880 দিয়ে শুরু
   facebook: "https://www.facebook.com/profile.php?id=61550563245668",                   // Facebook পেজের পুরো লিংক (https:// দিয়ে শুরু)
-  youtube: "https://youtube.com/channel/UCxXUoL4_Op-00IWiEdxzi7A?si=WfBuJ5EjYGXq7VCg"                     // YouTube চ্যানেলের পুরো লিংক (https:// দিয়ে শুরু)
+  youtube: "https://youtube.com/channel/UCxXUoL4_Op-00IWiEdxzi7A?si=WfBuJ5EjYGXq7VCg",
+  telegram: "https://t.me/ibrahimgraphicgallary"                     // YouTube চ্যানেলের পুরো লিংক (https:// দিয়ে শুরু)
 };
 /* ক্যাটাগরি যোগ বা বাদ দিতে এই তালিকা বদলান */
 const CATEGORIES = ["সব ডিজাইন", "এডিটেবল Illustrator ফাইল", "এডিটেবল Photoshop ফাইল", "মাহফিল পোস্টার", "মাহফিলের দাওয়াত কার্ড", "ব্যানার ডিজাইন", "থাম্বনেইল ডিজাইন", "লোগো ডিজাইন", "বাংলা প্রিমিয়াম ফন্ট", "অন্যান্য"];
@@ -148,14 +149,16 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 const ICONS = {
   wa:"M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88M20.46 3.49A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.42",
   fb:"M24 12.07C24 5.45 18.63.07 12 .07S0 5.45 0 12.07c0 5.99 4.39 10.95 10.13 11.85v-8.39H7.08v-3.47h3.05V9.43c0-3.01 1.79-4.67 4.53-4.67 1.31 0 2.69.23 2.69.23v2.95h-1.52c-1.49 0-1.96.93-1.96 1.87v2.25h3.33l-.53 3.47h-2.8v8.39C19.61 23.03 24 18.06 24 12.07",
+  tg:"M11.94 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.2 8.2c-.17 1.8-.92 6.2-1.3 8.23-.16.86-.48 1.15-.79 1.18-.67.06-1.18-.44-1.83-.87-1.02-.67-1.6-1.09-2.6-1.75-1.15-.76-.4-1.18.25-1.86.17-.18 3.14-2.88 3.2-3.13.01-.03.01-.15-.06-.21-.07-.06-.17-.04-.25-.02-.11.02-1.8 1.14-5.1 3.36-.48.33-.92.5-1.31.49-.43-.01-1.26-.24-1.88-.45-.76-.25-1.36-.38-1.31-.8.03-.22.33-.44.9-.67 3.53-1.54 5.88-2.55 7.06-3.04 3.36-1.4 4.06-1.64 4.51-1.65.1 0 .32.02.46.14.12.1.15.23.17.33-.01.07.01.3 0 .46z",
   yt:"M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"
 };
 (function(){
   const localNum = "0" + SITE.whatsapp.replace(/^880/,"");
   const items = [
-    {href:"https://wa.me/"+SITE.whatsapp, ic:"wa", bg:"#25D366", t:"WhatsApp মেসেজ", s:localNum},
-    {href:SITE.facebook, ic:"fb", bg:"#1877F2", t:"Facebook পেজ", s:"পেজে লাইক ও ফলো করুন"},
-    {href:SITE.youtube, ic:"yt", bg:"#E62117", t:"YouTube চ্যানেল", s:"সাবস্ক্রাইব করুন"}
+    {href:"https://wa.me/"+SITE.whatsapp, ic:"wa", bg:"#25D366", t:"WhatsApp", s:localNum},
+    {href:SITE.facebook, ic:"fb", bg:"#1877F2", t:"Facebook", s:"পেজ ফলো করুন"},
+    {href:SITE.youtube, ic:"yt", bg:"#E62117", t:"YouTube", s:"সাবস্ক্রাইব করুন"},
+    {href:SITE.telegram, ic:"tg", bg:"#229ED9", t:"Telegram", s:"চ্যানেলে জয়েন করুন"}
   ].filter(i=>i.href);
   $("links").innerHTML = items.map(i=>
     `<a class="lk" href="${esc(i.href)}" target="_blank" rel="noopener"><span class="ico" style="background:${i.bg}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[i.ic]}"/></svg></span><span><b>${esc(i.t)}</b><small>${esc(i.s)}</small></span><span class="go" aria-hidden="true">›</span></a>`).join("");
