@@ -304,8 +304,14 @@ if(sbc){
   const ALL = CATEGORIES[0];
   Promise.all([
     sbc.from("designs").select("*").order("created_at",{ascending:false}),
-    sbc.from("categories").select("name").order("pos").order("id")
-  ]).then(([d,c])=>{
+    sbc.from("categories").select("name").order("pos").order("id"),
+    sbc.from("site_settings").select("*")
+  ]).then(([d,c,s])=>{
+    /* অ্যাডমিন থেকে সেট করা ব্যানার/ব্যাকগ্রাউন্ড ছবি */
+    if(!s.error && s.data){
+      const bg = s.data.find(x=>x.key==="site_bg");
+      if(bg && bg.value) document.querySelector(".banner").style.background = `url("${bg.value}") center/cover no-repeat, linear-gradient(160deg,#14573F,#0A2E22)`;
+    }
     if(!c.error && c.data && c.data.length) CATEGORIES = [ALL, ...c.data.map(x=>x.name)];
     if(!d.error && d.data) DESIGNS = d.data.map(x=>({...x, category:OLD_NAMES[x.category]||x.category}));
     /* ক্যাটাগরি তালিকায় নেই এমন ক্যাটাগরির ডিজাইন থাকলে সেটাও ট্যাবে দেখাবে */

@@ -44,6 +44,16 @@ dialog{max-width:600px;width:calc(100% - 24px);border:1px solid var(--line);bord
 dialog::backdrop{background:rgba(0,0,0,.55)}
 :focus-visible{outline:3px solid #E3B24A;outline-offset:2px}
 @media(max-width:480px){.bar,.g2{grid-template-columns:1fr}}
+.prof{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.prof .in{flex:1;min-width:140px}
+.av{width:64px;height:64px;border-radius:50%;background:var(--green);color:var(--on);display:grid;place-items:center;font:800 26px "Noto Serif Bengali",serif;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.bgp{aspect-ratio:16/7;border-radius:12px;background-size:cover;background-position:center;border:1px solid var(--line);margin-top:10px}
+dialog.wide{max-width:1100px;height:92vh}
+dialog.wide[open]{display:flex;flex-direction:column}
+.pvbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.frame{flex:1;min-height:0;display:flex;justify-content:center;margin-top:10px;background:var(--bg);border-radius:10px;overflow:hidden}
+.frame iframe{width:100%;height:100%;border:0;background:#fff}
 </style>
 </head>
 <body>
@@ -59,7 +69,23 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 
 <div id="panel" hidden>
   <div class="box">
-    <div class="top"><h1>নতুন ডিজাইন আপলোড</h1><button class="alt" id="out" type="button">লগআউট</button></div>
+    <div class="prof">
+      <div class="av" id="pav"></div>
+      <div class="in"><b id="pname"></b><br><small>অ্যাডমিন</small></div>
+      <button class="alt sm" id="pvb" type="button">ওয়েবসাইট দেখুন</button>
+      <button class="alt sm" id="out" type="button">লগআউট</button>
+    </div>
+    <details>
+      <summary>প্রোফাইল এডিট</summary>
+      <label for="pn">নাম</label><input id="pn">
+      <label for="pf">প্রোফাইল ছবি বদলান</label><input id="pf" type="file" accept="image/*">
+      <button id="ps" type="button">সেভ করুন</button>
+      <p class="msg" id="pm" role="status"></p>
+    </details>
+  </div>
+
+  <div class="box">
+    <h1>নতুন ডিজাইন আপলোড</h1>
     <form id="uf">
       <label for="md">আপলোডের ধরন</label>
       <select id="md">
@@ -95,6 +121,14 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
   <div class="box">
     <h2>সেটিংস</h2>
     <details>
+      <summary>ওয়েবসাইটের ব্যাকগ্রাউন্ড (ব্যানার)</summary>
+      <div class="bgp" id="bgp"></div>
+      <label for="bgf">নতুন ব্যাকগ্রাউন্ড ছবি (বড় ও আড়াআড়ি ছবি ভালো)</label><input id="bgf" type="file" accept="image/*">
+      <button id="bgs" type="button">ওয়েবসাইটে লাগান</button>
+      <button class="alt" id="bgr" type="button" style="margin-top:16px">ডিফল্টে ফিরুন</button>
+      <p class="msg" id="bm" role="status"></p>
+    </details>
+    <details>
       <summary>ক্যাটাগরি ম্যানেজ</summary>
       <div id="cl"></div>
       <div class="cat"><input id="nc" placeholder="নতুন ক্যাটাগরির নাম" aria-label="নতুন ক্যাটাগরি"><button class="sm" id="ac" type="button">যোগ করুন</button></div>
@@ -120,6 +154,16 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
     </details>
   </div>
 </div>
+
+<dialog id="pvd" class="wide">
+  <div class="top"><h2>ওয়েবসাইট প্রিভিউ</h2><button class="alt sm" id="pvx" type="button">বন্ধ করুন</button></div>
+  <div class="pvbar">
+    <button class="sm" type="button" data-w="">কম্পিউটার</button>
+    <button class="sm alt" type="button" data-w="390px">মোবাইল</button>
+    <button class="sm alt" type="button" id="pvr">রিফ্রেশ</button>
+  </div>
+  <div class="frame"><iframe id="pfr" title="ওয়েবসাইট প্রিভিউ"></iframe></div>
+</dialog>
 
 <dialog id="ed">
   <h2>ডিজাইন এডিট</h2>
@@ -168,7 +212,7 @@ const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 let CATS = DEF_CATS.slice(), CROWS = [], DES = [], EDIT = null, EIMG = [];
 
 /* ---------- লগইন ---------- */
-function show(on){ $("login").hidden = on; $("panel").hidden = !on; if(on){ initSettings(); loadCats().then(loadList); } }
+function show(on){ $("login").hidden = on; $("panel").hidden = !on; if(on){ initSettings(); loadCats().then(loadList); loadSite(); } }
 sb.auth.getSession().then(({data})=>show(!!data.session));
 $("lf").onsubmit = async e => {
   e.preventDefault();
@@ -378,6 +422,93 @@ $("ef").onsubmit = async e => {
     m.textContent = "সমস্যা হয়েছে: " + t + (/images/.test(t) ? " (images কলাম নেই)" : "") + (/policy|permission|row-level/i.test(t) ? " (designs টেবিলে update পলিসি লাগবে, নিচের SQL দেখুন)" : "");
   }
 };
+
+/* ---------- প্রোফাইল, ব্যাকগ্রাউন্ড, প্রিভিউ ---------- */
+const DEF_NAME = "IBRAHIM AHMAD SADI";
+let SS = {};
+function fit(file, max, square){
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas"), x = c.getContext("2d");
+      if(square){
+        const s = Math.min(img.width, img.height);
+        c.width = c.height = Math.min(max, s);
+        x.drawImage(img, (img.width-s)/2, (img.height-s)/2, s, s, 0, 0, c.width, c.height);
+      } else {
+        const k = Math.min(1, max/Math.max(img.width, img.height));
+        c.width = Math.round(img.width*k); c.height = Math.round(img.height*k);
+        x.drawImage(img, 0, 0, c.width, c.height);
+      }
+      c.toBlob(b => res(b), "image/jpeg", .85);
+    };
+    img.onerror = rej; img.src = URL.createObjectURL(file);
+  });
+}
+async function upSite(file, prefix, max, square){
+  const blob = await fit(file, max, square);
+  const path = prefix + Date.now() + ".jpg";
+  const up = await sb.storage.from("previews").upload(path, blob, {contentType:"image/jpeg"});
+  if(up.error) throw up.error;
+  return sb.storage.from("previews").getPublicUrl(path).data.publicUrl;
+}
+const saveKey = (key, value) => sb.from("site_settings").upsert({key, value});
+function dropOld(u){ if(u && fname(u).startsWith("site-")) sb.storage.from("previews").remove([fname(u)]).then(()=>{},()=>{}); }
+function paintSite(){
+  const n = SS.admin_name || DEF_NAME;
+  $("pn").value = n; $("pname").textContent = n;
+  $("pav").innerHTML = SS.admin_photo ? `<img src="${esc(SS.admin_photo)}" alt="প্রোফাইল ছবি">` : esc(n.trim().charAt(0).toUpperCase());
+  $("bgp").style.backgroundImage = SS.site_bg ? `url("${SS.site_bg}")` : `url("hero.jpg"), linear-gradient(160deg,#14573F,#0A2E22)`;
+}
+async function loadSite(){
+  const r = await sb.from("site_settings").select("*");
+  SS = {};
+  if(r.error){ const t = "site_settings টেবিল নেই। SQL একবার চালান।"; $("pm").className = $("bm").className = "msg err"; $("pm").textContent = $("bm").textContent = t; }
+  else r.data.forEach(x => SS[x.key] = x.value);
+  paintSite();
+}
+$("ps").onclick = async () => {
+  const m = $("pm"), btn = $("ps"); m.className = "msg"; btn.disabled = true;
+  try{
+    const name = $("pn").value.trim() || DEF_NAME;
+    let r = await saveKey("admin_name", name); if(r.error) throw r.error;
+    const f = $("pf").files[0];
+    if(f){
+      m.textContent = "ছবি আপলোড হচ্ছে...";
+      const old = SS.admin_photo, u = await upSite(f, "site-profile-", 400, true);
+      r = await saveKey("admin_photo", u); if(r.error) throw r.error;
+      SS.admin_photo = u; dropOld(old); $("pf").value = "";
+    }
+    SS.admin_name = name; paintSite(); m.textContent = "সেভ হয়েছে।";
+  }catch(err){ m.className = "msg err"; m.textContent = "সমস্যা: " + (err.message||err); }
+  btn.disabled = false;
+};
+$("bgs").onclick = async () => {
+  const m = $("bm"), f = $("bgf").files[0]; m.className = "msg";
+  if(!f){ m.className = "msg err"; m.textContent = "আগে একটি ছবি বাছাই করুন।"; return; }
+  $("bgs").disabled = true; m.textContent = "আপলোড হচ্ছে...";
+  try{
+    const old = SS.site_bg, u = await upSite(f, "site-bg-", 1920, false);
+    const r = await saveKey("site_bg", u); if(r.error) throw r.error;
+    SS.site_bg = u; dropOld(old); $("bgf").value = ""; paintSite();
+    m.textContent = "ওয়েবসাইটের ব্যাকগ্রাউন্ড বদলে গেছে।";
+  }catch(err){ m.className = "msg err"; m.textContent = "সমস্যা: " + (err.message||err); }
+  $("bgs").disabled = false;
+};
+$("bgr").onclick = async () => {
+  const m = $("bm"); m.className = "msg";
+  const r = await saveKey("site_bg", "");
+  if(r.error){ m.className = "msg err"; m.textContent = "সমস্যা: " + r.error.message; return; }
+  dropOld(SS.site_bg); SS.site_bg = ""; paintSite(); m.textContent = "ডিফল্ট ব্যাকগ্রাউন্ডে ফেরানো হয়েছে।";
+};
+const fr = $("pfr"), reload = () => { fr.src = "index.html?v=" + Date.now(); };
+$("pvb").onclick = () => { reload(); $("pvd").showModal(); };
+$("pvx").onclick = () => { $("pvd").close(); fr.src = "about:blank"; };
+$("pvr").onclick = reload;
+$("pvd").querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
+  fr.style.maxWidth = b.dataset.w || "none";
+  $("pvd").querySelectorAll("[data-w]").forEach(x => x.classList.toggle("alt", x !== b));
+});
 }
 </script>
 </body>
