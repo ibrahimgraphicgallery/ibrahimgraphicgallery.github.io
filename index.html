@@ -119,6 +119,12 @@ let DESIGNS = [
 ];
 /* ============================================================ */
 
+/* আগের আপলোড করা ডিজাইনের পুরনো ক্যাটাগরি নাম নতুন নামে দেখাবে */
+const OLD_NAMES = {
+  "Illustrator ডিজাইন": "এডিটেবল Illustrator ফাইল",
+  "Photoshop ডিজাইন": "এডিটেবল Photoshop ফাইল"
+};
+
 const $ = id => document.getElementById(id);
 let current = CATEGORIES[0];
 
@@ -211,7 +217,7 @@ renderTabs();renderGrid();
 if(window.SUPABASE_URL && !window.SUPABASE_URL.includes("YOUR_") && window.supabase){
   window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_KEY)
     .from("designs").select("*").order("created_at",{ascending:false})
-    .then(({data,error})=>{ if(!error&&data){DESIGNS=data;renderTabs();renderGrid()} });
+    .then(({data,error})=>{ if(!error&&data){DESIGNS=data.map(d=>({...d,category:OLD_NAMES[d.category]||d.category}));renderTabs();renderGrid()} });
 }
 </script>
 </body>
