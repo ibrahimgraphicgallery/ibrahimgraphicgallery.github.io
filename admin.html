@@ -54,6 +54,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
 .pvbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .frame{flex:1;min-height:0;display:flex;justify-content:center;margin-top:10px;background:var(--bg);border-radius:10px;overflow:hidden}
 .frame iframe{width:100%;height:100%;border:0;background:#fff}
+.ic{display:grid;place-items:center;padding:6px 10px}
 .lnk{background:none;color:var(--green);border:0;padding:0;margin:14px 0 0;font:500 15px inherit;font-family:inherit;text-decoration:underline;cursor:pointer;display:block}
 </style>
 </head>
@@ -86,6 +87,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
       <div class="av" id="pav"></div>
       <div class="in"><b id="pname"></b><br><small>অ্যাডমিন</small></div>
       <button class="alt sm" id="pvb" type="button">ওয়েবসাইট দেখুন</button>
+      <button class="alt sm ic" id="stb" type="button" aria-label="সেটিংস" title="সেটিংস"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
       <button class="alt sm" id="out" type="button">লগআউট</button>
     </div>
     <details>
@@ -131,8 +133,8 @@ dialog.wide[open]{display:flex;flex-direction:column}
     <div id="list"></div>
   </div>
 
-  <div class="box">
-    <h2>সেটিংস</h2>
+  <dialog id="sdlg">
+    <div class="top"><h2>সেটিংস</h2><button class="alt sm" id="sx" type="button">বন্ধ করুন</button></div>
     <details>
       <summary>ওয়েবসাইটের ব্যাকগ্রাউন্ড (ব্যানার)</summary>
       <div class="bgp" id="bgp"></div>
@@ -175,7 +177,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
       </div>
       <button class="alt sm" id="tr" type="button" style="margin-top:12px">ডিফল্ট রং ফিরিয়ে আনুন</button>
     </details>
-  </div>
+  </dialog>
 </div>
 
 <dialog id="pvd" class="wide">
@@ -249,7 +251,10 @@ $("lf").onsubmit = async e => {
   const {error} = await sb.auth.signInWithPassword({email:$("em").value.trim(), password:$("pw").value});
   if(error) $("le").textContent = "ইমেইল বা পাসওয়ার্ড ভুল।"; else show(true);
 };
-$("out").onclick = async () => { await sb.auth.signOut(); show(false); };
+$("out").onclick = async () => { await sb.auth.signOut(); $("sdlg").close(); show(false); };
+$("stb").onclick = () => $("sdlg").showModal();
+$("sx").onclick = () => $("sdlg").close();
+$("sdlg").addEventListener("click", e => { if(e.target === $("sdlg")) $("sdlg").close(); });
 
 /* ---------- পাসওয়ার্ড: ভুলে গেলে রিসেট, আর বদলানো ---------- */
 $("fp").onclick = async () => {
