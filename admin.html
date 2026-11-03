@@ -54,6 +54,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
 .pvbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .frame{flex:1;min-height:0;display:flex;justify-content:center;margin-top:10px;background:var(--bg);border-radius:10px;overflow:hidden}
 .frame iframe{width:100%;height:100%;border:0;background:#fff}
+.lnk{background:none;color:var(--green);border:0;padding:0;margin:14px 0 0;font:500 15px inherit;font-family:inherit;text-decoration:underline;cursor:pointer;display:block}
 </style>
 </head>
 <body>
@@ -64,6 +65,18 @@ dialog.wide[open]{display:flex;flex-direction:column}
     <label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password" required>
     <button type="submit">লগইন করুন</button>
     <p class="msg err" id="le" role="alert"></p>
+    <button class="lnk" id="fp" type="button">পাসওয়ার্ড ভুলে গেছি?</button>
+    <p class="msg" id="lm" role="status"></p>
+  </form>
+</div>
+
+<div class="box" id="rec" hidden>
+  <h1>নতুন পাসওয়ার্ড সেট করুন</h1>
+  <form id="rf">
+    <label for="np1">নতুন পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)</label><input id="np1" type="password" autocomplete="new-password" minlength="8" required>
+    <label for="np2">নতুন পাসওয়ার্ড আবার লিখুন</label><input id="np2" type="password" autocomplete="new-password" minlength="8" required>
+    <button type="submit">পাসওয়ার্ড সেভ করুন</button>
+    <p class="msg" id="rm" role="alert"></p>
   </form>
 </div>
 
@@ -127,6 +140,16 @@ dialog.wide[open]{display:flex;flex-direction:column}
       <button id="bgs" type="button">ওয়েবসাইটে লাগান</button>
       <button class="alt" id="bgr" type="button" style="margin-top:16px">ডিফল্টে ফিরুন</button>
       <p class="msg" id="bm" role="status"></p>
+    </details>
+    <details>
+      <summary>পাসওয়ার্ড বদলান</summary>
+      <form id="cpf">
+        <label for="cp0">বর্তমান পাসওয়ার্ড</label><input id="cp0" type="password" autocomplete="current-password" required>
+        <label for="cp1">নতুন পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)</label><input id="cp1" type="password" autocomplete="new-password" minlength="8" required>
+        <label for="cp2">নতুন পাসওয়ার্ড আবার লিখুন</label><input id="cp2" type="password" autocomplete="new-password" minlength="8" required>
+        <button type="submit" id="cps">পাসওয়ার্ড বদলান</button>
+        <p class="msg" id="cpm" role="status"></p>
+      </form>
     </details>
     <details>
       <summary>ক্যাটাগরি ম্যানেজ</summary>
@@ -212,7 +235,14 @@ const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 let CATS = DEF_CATS.slice(), CROWS = [], DES = [], EDIT = null, EIMG = [];
 
 /* ---------- লগইন ---------- */
-function show(on){ $("login").hidden = on; $("panel").hidden = !on; if(on){ initSettings(); loadCats().then(loadList); loadSite(); } }
+let REC = /type=recovery/.test(location.hash);
+function show(on){
+  if(on && REC){ $("login").hidden = true; $("panel").hidden = true; $("rec").hidden = false; return; }
+  $("rec").hidden = true; $("login").hidden = on; $("panel").hidden = !on;
+  if(on){ initSettings(); loadCats().then(loadList); loadSite(); }
+}
+if(/error_description/.test(location.hash)){ setTimeout(()=>{ $("le").textContent = "রিসেট লিংকের মেয়াদ শেষ বা লিংকটা আগেই ব্যবহার হয়ে গেছে। আবার \"পাসওয়ার্ড ভুলে গেছি\" চাপুন।"; }, 0); }
+sb.auth.onAuthStateChange(ev => { if(ev === "PASSWORD_RECOVERY"){ REC = true; show(true); } });
 sb.auth.getSession().then(({data})=>show(!!data.session));
 $("lf").onsubmit = async e => {
   e.preventDefault();
@@ -220,6 +250,44 @@ $("lf").onsubmit = async e => {
   if(error) $("le").textContent = "ইমেইল বা পাসওয়ার্ড ভুল।"; else show(true);
 };
 $("out").onclick = async () => { await sb.auth.signOut(); show(false); };
+
+/* ---------- পাসওয়ার্ড: ভুলে গেলে রিসেট, আর বদলানো ---------- */
+$("fp").onclick = async () => {
+  const m = $("lm"), mail = $("em").value.trim(); m.className = "msg";
+  if(!mail){ m.className = "msg err"; m.textContent = "আগে উপরের ইমেইল ঘরে আপনার ইমেইল লিখুন, তারপর এখানে চাপুন।"; return; }
+  m.textContent = "পাঠানো হচ্ছে...";
+  const r = await sb.auth.resetPasswordForEmail(mail, {redirectTo: location.origin + location.pathname});
+  if(r.error){ m.className = "msg err"; m.textContent = "সমস্যা: " + r.error.message; return; }
+  m.textContent = "রিসেট লিংক পাঠানো হয়েছে। ইমেইল দেখুন (না পেলে স্প্যাম ফোল্ডারও দেখুন)।";
+};
+$("rf").onsubmit = async e => {
+  e.preventDefault();
+  const m = $("rm"), a = $("np1").value, b = $("np2").value; m.className = "msg";
+  if(a.length < 8){ m.className = "msg err"; m.textContent = "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।"; return; }
+  if(a !== b){ m.className = "msg err"; m.textContent = "দুই জায়গার পাসওয়ার্ড মেলেনি।"; return; }
+  const r = await sb.auth.updateUser({password: a});
+  if(r.error){ m.className = "msg err"; m.textContent = "সমস্যা: " + r.error.message; return; }
+  REC = false; try{ history.replaceState(null, "", location.pathname + location.search); }catch(x){}
+  $("rf").reset(); m.textContent = ""; show(true);
+};
+$("cpf").onsubmit = async e => {
+  e.preventDefault();
+  const m = $("cpm"), cur = $("cp0").value, a = $("cp1").value, b = $("cp2").value; m.className = "msg";
+  if(a.length < 8){ m.className = "msg err"; m.textContent = "নতুন পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।"; return; }
+  if(a !== b){ m.className = "msg err"; m.textContent = "দুই জায়গার নতুন পাসওয়ার্ড মেলেনি।"; return; }
+  $("cps").disabled = true;
+  try{
+    const {data} = await sb.auth.getSession(), mail = data.session && data.session.user && data.session.user.email;
+    const v = await sb.auth.signInWithPassword({email: mail, password: cur});
+    if(v.error){ m.className = "msg err"; m.textContent = "বর্তমান পাসওয়ার্ড ভুল।"; }
+    else {
+      const u = await sb.auth.updateUser({password: a});
+      if(u.error){ m.className = "msg err"; m.textContent = "সমস্যা: " + u.error.message; }
+      else { m.textContent = "পাসওয়ার্ড বদলে গেছে। পরের বার নতুনটা দিয়ে লগইন করবেন।"; $("cpf").reset(); }
+    }
+  }catch(x){ m.className = "msg err"; m.textContent = "সমস্যা: " + (x.message||x); }
+  $("cps").disabled = false;
+};
 
 /* ---------- ক্যাটাগরি ---------- */
 function fillCats(){
