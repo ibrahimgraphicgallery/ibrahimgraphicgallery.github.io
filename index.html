@@ -134,8 +134,8 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
   </header>
   <div class="banner" role="img" aria-label="ইব্রাহীম গ্রাফিক্স গ্যালারী"></div>
   <section class="hero">
-    <h1>ইব্রাহীম গ্রাফিক্স গ্যালারিতে পেয়ে যাচ্ছেন নান্দনিক সব ডিজাইন, সহজে হাতের মুঠোয়</h1>
-    <p>ডিজাইনের কাজ সহজ করুন, তৈরিকৃত Illustrator ও Photoshop ফাইল নিন।</p>
+    <h1 id="hh">ইব্রাহীম গ্রাফিক্স গ্যালারিতে পেয়ে যাচ্ছেন নান্দনিক সব ডিজাইন, সহজে হাতের মুঠোয়</h1>
+    <p id="hp">ডিজাইনের কাজ সহজ করুন, তৈরিকৃত Illustrator ও Photoshop ফাইল নিন।</p>
   </section>
   <section class="about" id="about" aria-label="পরিচিতি">
     <div class="abav" id="abav"></div>
@@ -253,6 +253,15 @@ function renderAbout(){
   $("abav").innerHTML = ph ? `<img src="${esc(ph)}" alt="${esc(n)}">` : esc(n.trim().charAt(0).toUpperCase());
   setWa();
 }
+function renderHero(){
+  /* হোম পেজের বড় লেখা ও ছোট লেখা: অ্যাডমিন থেকে বদলানো যায়। ফাঁকা ছোট লেখা লুকিয়ে যায়, ফাঁকা বড় লেখা হলে ডিফল্ট থাকে */
+  const t = String(SS.hero_title||"").trim();
+  if(t) $("hh").textContent = t;
+  if(SS.hero_sub !== undefined && SS.hero_sub !== null){
+    const s = String(SS.hero_sub).trim();
+    $("hp").textContent = s; $("hp").hidden = !s;
+  }
+}
 function renderOrder(){
   /* অ্যাডমিন থেকে সার্ভিস না দিলে কার্ড দেখাবে না, শুধু নিচের WhatsApp বাটন থাকবে */
   const list = SS.services === undefined ? [] : parseServices(SS.services);
@@ -275,7 +284,7 @@ function applySettings(rows){
   if(SS.pay_number) SITE.number = String(SS.pay_number).trim();
   ["facebook","youtube","telegram"].forEach(k => { if(SS[k] !== undefined && SS[k] !== null) SITE[k] = String(SS[k]).trim(); });
   if(SS.site_bg) document.querySelector(".banner").style.background = `url("${SS.site_bg}") center/cover no-repeat, linear-gradient(160deg,#14573F,#0A2E22)`;
-  buildLinks(); renderAbout(); renderOrder(); renderVideos();
+  buildLinks(); renderAbout(); renderHero(); renderOrder(); renderVideos();
 }
 function count(c){return c===CATEGORIES[0]?DESIGNS.length:DESIGNS.filter(d=>d.category===c).length}
 let moved=false;
