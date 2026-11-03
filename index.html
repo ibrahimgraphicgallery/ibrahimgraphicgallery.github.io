@@ -31,6 +31,19 @@ header.top{display:flex;justify-content:space-between;align-items:center;padding
 .hero{padding:30px 0 12px}
 .hero h1{font:800 clamp(26px,4.6vw,44px)/1.45 var(--serif);max-width:24em}
 .hero p{color:var(--mut);margin-top:14px;max-width:52ch}
+.catmenu{position:relative;padding:18px 0 14px;border-bottom:2px solid var(--line)}
+.catbtn{display:flex;align-items:center;gap:10px;font:600 17px var(--sans);color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 16px;cursor:pointer;max-width:100%}
+.catbtn:hover,.catbtn[aria-expanded=true]{border-color:var(--gold)}
+.catbtn svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.catbtn b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.catbtn i{font-style:normal;color:var(--gold);font-size:14px;transition:transform .15s}
+.catbtn[aria-expanded=true] i{transform:rotate(180deg)}
+.catpanel{position:absolute;left:0;top:calc(100% - 8px);z-index:30;width:min(100%,380px);max-height:min(70vh,520px);overflow:auto;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 14px 34px rgba(0,0,0,.14)}
+.catpanel[hidden]{display:none}
+.catitem{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;font:500 16px var(--sans);color:var(--ink);background:transparent;border:0;border-radius:10px;padding:11px 12px;cursor:pointer}
+.catitem:hover{background:var(--bg)}
+.catitem[aria-current=true]{background:var(--bg);font-weight:700}
+.catitem span{color:var(--gold);font-size:14px;flex:none}
 .tabwrap{position:relative}
 .tabs{display:flex;gap:8px;overflow-x:auto;padding:18px 0 0;border-bottom:2px solid var(--line);scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .tabs::-webkit-scrollbar{display:none}
@@ -146,10 +159,9 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
     </div>
   </section>
   <div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" type="search" placeholder="ডিজাইনের নাম দিয়ে খুঁজুন" aria-label="ডিজাইন খুঁজুন" autocomplete="off"></div>
-  <div class="tabwrap">
-    <button class="arr l" id="al" type="button" aria-label="বামে যান" hidden>‹</button>
-    <div class="tabs" id="tabs" role="tablist" aria-label="ক্যাটাগরি"></div>
-    <button class="arr r" id="ar" type="button" aria-label="ডানে যান">›</button>
+  <div class="catmenu" id="catmenu">
+    <button class="catbtn" id="catbtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="catpanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><b id="catname"></b><i aria-hidden="true">▾</i></button>
+    <div class="catpanel" id="catpanel" role="menu" aria-label="ক্যাটাগরি" hidden></div>
   </div>
   <main class="grid" id="grid"></main>
   <div class="more" id="more" hidden><button class="btn alt" id="mb" type="button">আরও দেখুন</button></div>
@@ -297,38 +309,19 @@ function applySettings(rows){
   buildLinks(); renderAbout(); renderHero(); renderOrder(); renderVideos();
 }
 function count(c){return c===CATEGORIES[0]?DESIGNS.length:DESIGNS.filter(d=>d.category===c).length}
-let moved=false;
-function updArr(){
-  const t=$("tabs"),max=t.scrollWidth-t.clientWidth;
-  $("al").hidden=t.scrollLeft<=2;
-  $("ar").hidden=t.scrollLeft>=max-2;
-}
+function closeCat(){$("catpanel").hidden=true;$("catbtn").setAttribute("aria-expanded","false")}
 function renderTabs(){
-  const t=$("tabs"),keep=t.scrollLeft;
-  t.innerHTML = CATEGORIES.map(c=>
-    `<button class="tab" role="tab" aria-selected="${c===current}" data-c="${esc(c)}">${esc(c)}<span>${count(c)}</span></button>`).join("");
-  t.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{if(moved)return;current=b.dataset.c;shown=PAGE;renderTabs();renderGrid()});
-  t.scrollLeft=keep;updArr();
+  $("catname").textContent = current;
+  const pn = $("catpanel");
+  pn.innerHTML = CATEGORIES.map(c=>
+    `<button type="button" class="catitem" role="menuitem" aria-current="${c===current}" data-c="${esc(c)}">${esc(c)}<span>${count(c)}</span></button>`).join("");
+  pn.querySelectorAll(".catitem").forEach(b=>b.onclick=()=>{current=b.dataset.c;shown=PAGE;closeCat();renderTabs();renderGrid()});
 }
 (function(){
-  const t=$("tabs");let down=false,sx=0,sl=0;
-  t.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")return;down=true;moved=false;sx=e.clientX;sl=t.scrollLeft});
-  window.addEventListener("pointermove",e=>{
-    if(!down)return;const dx=e.clientX-sx;
-    if(Math.abs(dx)>5){moved=true;t.classList.add("drag")}
-    if(moved)t.scrollLeft=sl-dx;
-  });
-  window.addEventListener("pointerup",()=>{down=false;t.classList.remove("drag");setTimeout(()=>{moved=false},0)});
-  t.addEventListener("wheel",e=>{
-    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){
-      const max=t.scrollWidth-t.clientWidth,nx=t.scrollLeft+e.deltaY;
-      if(max>0&&nx>=0&&nx<=max){t.scrollLeft=nx;e.preventDefault()}
-    }
-  },{passive:false});
-  t.addEventListener("scroll",updArr);
-  window.addEventListener("resize",updArr);
-  $("al").onclick=()=>t.scrollBy({left:-240,behavior:"smooth"});
-  $("ar").onclick=()=>t.scrollBy({left:240,behavior:"smooth"});
+  const btn=$("catbtn"),pn=$("catpanel");
+  btn.onclick=()=>{const open=pn.hidden;pn.hidden=!open;btn.setAttribute("aria-expanded",String(open))};
+  document.addEventListener("click",e=>{if(!pn.hidden&&!$("catmenu").contains(e.target))closeCat()});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!pn.hidden){closeCat();btn.focus()}});
 })();
 function pv(d,cls){
   return `<img src="${esc(d.preview||"")}" alt="${esc(d.title)}" loading="lazy" onload="this.parentNode.classList.add('ld');window.relay&&relay()" onerror="this.parentNode.classList.add('noimg');this.remove();window.relay&&relay()"><b>${esc(d.title)}</b>`;
