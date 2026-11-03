@@ -107,7 +107,6 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
 .abt h2{font:800 20px/1.4 var(--serif)}
 .abt p{color:var(--mut);margin-top:4px}
 .abt .btn{margin-top:10px;padding:8px 18px;font-size:15px}
-.nw{position:absolute;top:10px;left:10px;z-index:1;background:#E3B24A;color:#3A2F12;font:600 13px/1.6 var(--sans);padding:0 10px;border-radius:999px}
 .more{text-align:center;padding:0 0 48px}
 .more[hidden]{display:none}
 .order,.vids{margin:8px 0 44px}
@@ -345,11 +344,10 @@ function renderGrid(){
   CARDS=list.map(d=>{
     const i = DESIGNS.indexOf(d);
     const n = imgsOf(d).length;
-    const isNew = d.created_at && (Date.now() - new Date(d.created_at).getTime()) < 14*864e5;
     const dlText = (!d.price && (d.downloads||0) > 0) ? `<br><span class="dl">↓ ${d.downloads} ডাউনলোড</span>` : "";
     const el=document.createElement("button");
     el.className="card";el.dataset.i=i;
-    el.innerHTML=`<div class="pv">${pv(d)}${isNew?`<span class="nw">নতুন</span>`:""}${n>1?`<span class="cnt">${n}টি ছবি</span>`:""}</div>
+    el.innerHTML=`<div class="pv">${pv(d)}${n>1?`<span class="cnt">${n}টি ছবি</span>`:""}</div>
     <div class="meta"><div><strong>${esc(d.title)}</strong>${dlText}</div>
     <span class="tag ${d.price?"paid":"free"}">${d.price?"৳ "+d.price:"ফ্রি"}</span></div>`;
     el.onclick=()=>openDesign(DESIGNS[i]);
