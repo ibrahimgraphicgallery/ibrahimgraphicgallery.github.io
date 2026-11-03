@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ইব্রাহীম গ্রাফিক্স গ্যালারী</title>
+<meta name="description" content="ইসলামিক দাওয়াতপত্র, মাহফিল পোস্টার, ব্যানার ও লোগো ডিজাইন। এডিটেবল Illustrator ও Photoshop ফাইল সহজে হাতের মুঠোয়।">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="bn_BD">
+<meta property="og:title" content="ইব্রাহীম গ্রাফিক্স গ্যালারী">
+<meta property="og:description" content="ইসলামিক দাওয়াতপত্র, মাহফিল পোস্টার, ব্যানার ও লোগো ডিজাইন। এডিটেবল Illustrator ও Photoshop ফাইল সহজে হাতের মুঠোয়।">
+<meta property="og:url" content="https://ibrahimgraphicgallery.github.io/">
+<meta property="og:image" content="https://ibrahimgraphicgallery.github.io/hero.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;800&display=swap" rel="stylesheet">
 <style>
@@ -89,6 +97,33 @@ input{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1.5px 
 .lk .go{margin-left:auto;font-size:22px;color:#E3B24A}
 @media (prefers-reduced-motion:reduce){.lk{transition:none}.lk:hover{transform:none}}
 footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);font-size:15px}
+.search{position:relative;margin-top:22px}
+.search input{padding:12px 16px 12px 46px;border-radius:999px;font-size:16px}
+.search svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mut);fill:none;stroke-width:2;stroke-linecap:round;pointer-events:none}
+.about{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:6px 22px 6px 22px;padding:18px 20px}
+.abav{flex:none;width:84px;height:84px;border-radius:50%;overflow:hidden;background:var(--green);color:var(--on);display:grid;place-items:center;font:800 34px/1 var(--serif);border:3px solid var(--line)}
+.abav img{width:100%;height:100%;object-fit:cover;display:block}
+.abt{flex:1;min-width:150px}
+.abt h2{font:800 20px/1.4 var(--serif)}
+.abt p{color:var(--mut);margin-top:4px}
+.abt .btn{margin-top:10px;padding:8px 18px;font-size:15px}
+.nw{position:absolute;top:10px;left:10px;z-index:1;background:#E3B24A;color:#3A2F12;font:600 13px/1.6 var(--sans);padding:0 10px;border-radius:999px}
+.more{text-align:center;padding:0 0 48px}
+.more[hidden]{display:none}
+.order,.vids{margin:8px 0 44px}
+.order h2,.vids h2{font:800 clamp(22px,3.2vw,30px)/1.5 var(--serif)}
+.order>p{color:var(--mut);margin-top:6px;max-width:58ch}
+.svcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:20px}
+.svc{background:var(--card);border:1px solid var(--line);border-radius:6px 22px 6px 22px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.svc b{font:600 18px/1.4 var(--sans)}
+.svc .pr{color:var(--gold);font-weight:600;font-size:15px}
+.svc .btn{margin-top:auto;text-align:center;font-size:15px;padding:10px 14px}
+.order[hidden],.vids[hidden]{display:none}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px}
+.vd{position:relative;aspect-ratio:16/9;border-radius:6px 22px 6px 22px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.vd button{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;margin:0;cursor:pointer;background:#000 center/cover no-repeat}
+.vd .pl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:rgba(0,0,0,.62);display:grid;place-items:center;color:#fff;font-size:24px;padding-left:4px}
+.vd iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 </style>
 </head>
 <body>
@@ -102,12 +137,31 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
     <h1>ইব্রাহীম গ্রাফিক্স গ্যালারিতে পেয়ে যাচ্ছেন নান্দনিক সব ডিজাইন, সহজে হাতের মুঠোয়</h1>
     <p>ডিজাইনের কাজ সহজ করুন, তৈরিকৃত Illustrator ও Photoshop ফাইল নিন।</p>
   </section>
+  <section class="about" id="about" aria-label="পরিচিতি">
+    <div class="abav" id="abav"></div>
+    <div class="abt">
+      <h2 id="abn"></h2>
+      <p id="abt"></p>
+      <a class="btn" id="abw" target="_blank" rel="noopener">WhatsApp-এ মেসেজ করুন</a>
+    </div>
+  </section>
+  <div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" type="search" placeholder="ডিজাইনের নাম দিয়ে খুঁজুন" aria-label="ডিজাইন খুঁজুন" autocomplete="off"></div>
   <div class="tabwrap">
     <button class="arr l" id="al" type="button" aria-label="বামে যান" hidden>‹</button>
     <div class="tabs" id="tabs" role="tablist" aria-label="ক্যাটাগরি"></div>
     <button class="arr r" id="ar" type="button" aria-label="ডানে যান">›</button>
   </div>
   <main class="grid" id="grid"></main>
+  <div class="more" id="more" hidden><button class="btn alt" id="mb" type="button">আরও দেখুন</button></div>
+  <section class="order" id="order" aria-labelledby="oh">
+    <h2 id="oh">আপনার জন্য কাস্টম ডিজাইন চান?</h2>
+    <p>পছন্দের কাজটা বেছে নিয়ে WhatsApp-এ জানান। আপনার প্রয়োজন অনুযায়ী ডিজাইন করে দেওয়া হবে।</p>
+    <div class="svcs" id="svcs"></div>
+  </section>
+  <section class="vids" id="vids" aria-labelledby="vh" hidden>
+    <h2 id="vh">আমার কাজের ভিডিও</h2>
+    <div class="vgrid" id="vgrid"></div>
+  </section>
   <section class="connect" aria-labelledby="ch">
     <h2 id="ch">আমাদের সাথে থাকুন</h2>
     <p>নতুন ডিজাইন, ফ্রি ফাইল আর কাস্টম কাজের খবর পেতে যেকোনো মাধ্যমে যুক্ত হোন।</p>
@@ -171,7 +225,15 @@ const ICONS = {
   tg:"M11.94 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.2 8.2c-.17 1.8-.92 6.2-1.3 8.23-.16.86-.48 1.15-.79 1.18-.67.06-1.18-.44-1.83-.87-1.02-.67-1.6-1.09-2.6-1.75-1.15-.76-.4-1.18.25-1.86.17-.18 3.14-2.88 3.2-3.13.01-.03.01-.15-.06-.21-.07-.06-.17-.04-.25-.02-.11.02-1.8 1.14-5.1 3.36-.48.33-.92.5-1.31.49-.43-.01-1.26-.24-1.88-.45-.76-.25-1.36-.38-1.31-.8.03-.22.33-.44.9-.67 3.53-1.54 5.88-2.55 7.06-3.04 3.36-1.4 4.06-1.64 4.51-1.65.1 0 .32.02.46.14.12.1.15.23.17.33-.01.07.01.3 0 .46z",
   yt:"M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"
 };
-(function(){
+const PAGE = 12;
+let shown = PAGE, Q = "", SS = {};
+const DEF_ABOUT = "ইসলামিক দাওয়াতপত্র, মাহফিল পোস্টার ও ব্যানার ডিজাইন করি। আপনার প্রয়োজনের কাজ আমাকে জানান।";
+const DEF_SERVICES = ["ইসলামিক দাওয়াতপত্র","মাহফিল পোস্টার","ব্যানার ডিজাইন","লোগো ডিজাইন"];
+function waNum(s){const d=String(s||"").replace(/\D/g,"");if(!d)return "";if(d.startsWith("880"))return d;if(d.startsWith("0"))return "88"+d;return d}
+function waLink(msg){return "https://wa.me/"+SITE.whatsapp+(msg?"?text="+encodeURIComponent(msg):"")}
+function parseServices(t){return String(t||"").split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.indexOf("|");return i<0?{n:l,p:""}:{n:l.slice(0,i).trim(),p:l.slice(i+1).trim()}}).filter(x=>x.n)}
+function ytId(u){const m=String(u||"").match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/|live\/)([\w-]{11})/);return m?m[1]:""}
+function buildLinks(){
   const localNum = "0" + SITE.whatsapp.replace(/^880/,"");
   const items = [
     {href:"https://wa.me/"+SITE.whatsapp, ic:"wa", bg:"#25D366", t:"WhatsApp", s:localNum},
@@ -181,7 +243,37 @@ const ICONS = {
   ].filter(i=>i.href);
   $("links").innerHTML = items.map(i=>
     `<a class="lk" href="${esc(i.href)}" target="_blank" rel="noopener"><span class="ico" style="background:${i.bg}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[i.ic]}"/></svg></span><span><b>${esc(i.t)}</b><small>${esc(i.s)}</small></span><span class="go" aria-hidden="true">›</span></a>`).join("");
-})();
+}
+buildLinks();
+function setWa(){ $("wa").href = waLink(); $("abw").href = waLink("আসসালামু আলাইকুম।"); }
+function renderAbout(){
+  const n = SS.admin_name || SITE.name, ph = SS.admin_photo;
+  $("abn").textContent = n; $("abt").textContent = SS.about_text || DEF_ABOUT;
+  $("abav").innerHTML = ph ? `<img src="${esc(ph)}" alt="${esc(n)}">` : esc(n.trim().charAt(0).toUpperCase());
+  setWa();
+}
+function renderOrder(){
+  let list = SS.services === undefined ? DEF_SERVICES.map(n=>({n,p:""})) : parseServices(SS.services);
+  $("order").hidden = !list.length;
+  $("svcs").innerHTML = list.map(x=>`<div class="svc"><b>${esc(x.n)}</b><span class="pr">${x.p?"শুরু ৳ "+esc(x.p):"দাম জানতে মেসেজ করুন"}</span><a class="btn alt" href="${esc(waLink('আসসালামু আলাইকুম। আমি "'+x.n+'" ডিজাইন করাতে চাই।'))}" target="_blank" rel="noopener">WhatsApp-এ অর্ডার করুন</a></div>`).join("");
+}
+function renderVideos(){
+  const ids = String(SS.videos||"").split("\n").map(ytId).filter(Boolean);
+  $("vids").hidden = !ids.length;
+  $("vgrid").innerHTML = ids.map(id=>`<div class="vd" data-id="${id}"><button type="button" style="background-image:url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)" aria-label="ভিডিও চালান"><span class="pl">▶</span></button></div>`).join("");
+  $("vgrid").querySelectorAll(".vd button").forEach(b=>b.onclick=()=>{
+    const d=b.parentNode;
+    d.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${d.dataset.id}?autoplay=1&rel=0" title="ভিডিও" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  });
+}
+function applySettings(rows){
+  SS = {}; rows.forEach(x => SS[x.key] = x.value);
+  if(SS.wa_number && waNum(SS.wa_number)) SITE.whatsapp = waNum(SS.wa_number);
+  if(SS.pay_number) SITE.number = String(SS.pay_number).trim();
+  ["facebook","youtube","telegram"].forEach(k => { if(SS[k] !== undefined && SS[k] !== null) SITE[k] = String(SS[k]).trim(); });
+  if(SS.site_bg) document.querySelector(".banner").style.background = `url("${SS.site_bg}") center/cover no-repeat, linear-gradient(160deg,#14573F,#0A2E22)`;
+  buildLinks(); renderAbout(); renderOrder(); renderVideos();
+}
 function count(c){return c===CATEGORIES[0]?DESIGNS.length:DESIGNS.filter(d=>d.category===c).length}
 let moved=false;
 function updArr(){
@@ -193,7 +285,7 @@ function renderTabs(){
   const t=$("tabs"),keep=t.scrollLeft;
   t.innerHTML = CATEGORIES.map(c=>
     `<button class="tab" role="tab" aria-selected="${c===current}" data-c="${esc(c)}">${esc(c)}<span>${count(c)}</span></button>`).join("");
-  t.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{if(moved)return;current=b.dataset.c;renderTabs();renderGrid()});
+  t.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{if(moved)return;current=b.dataset.c;shown=PAGE;renderTabs();renderGrid()});
   t.scrollLeft=keep;updArr();
 }
 (function(){
@@ -236,17 +328,25 @@ function layoutGrid(){
 }
 window.relay=function(){clearTimeout(relayT);relayT=setTimeout(layoutGrid,150)};
 window.addEventListener("resize",()=>{if(colCount()!==lastN)layoutGrid()});
+function filtered(){
+  let list = current===CATEGORIES[0]?DESIGNS:DESIGNS.filter(d=>d.category===current);
+  const q = Q.trim().toLowerCase();
+  if(q) list = list.filter(d=>((d.title||"")+" "+(d.note||"")+" "+(d.category||"")).toLowerCase().includes(q));
+  return list;
+}
 function renderGrid(){
-  const list = current===CATEGORIES[0]?DESIGNS:DESIGNS.filter(d=>d.category===current);
-  const g=$("grid");
-  if(!list.length){CARDS=[];g.innerHTML=`<p class="empty">এই ক্যাটাগরিতে এখনো কোনো ডিজাইন নেই।</p>`;return}
+  const all = filtered(), list = all.slice(0, shown), g = $("grid");
+  $("more").hidden = all.length <= shown;
+  $("mb").textContent = "আরও দেখুন (" + (all.length - shown) + "টি বাকি)";
+  if(!list.length){CARDS=[];g.innerHTML=`<p class="empty">${Q.trim()?"“"+esc(Q.trim())+"” নামে কিছু পাওয়া যায়নি।":"এই ক্যাটাগরিতে এখনো কোনো ডিজাইন নেই।"}</p>`;return}
   CARDS=list.map(d=>{
     const i = DESIGNS.indexOf(d);
     const n = imgsOf(d).length;
+    const isNew = d.created_at && (Date.now() - new Date(d.created_at).getTime()) < 14*864e5;
     const dlText = (d.downloads||0) > 0 ? `<br><span class="dl">↓ ${d.downloads} ডাউনলোড</span>` : "";
     const el=document.createElement("button");
     el.className="card";el.dataset.i=i;
-    el.innerHTML=`<div class="pv">${pv(d)}${n>1?`<span class="cnt">${n}টি ছবি</span>`:""}</div>
+    el.innerHTML=`<div class="pv">${pv(d)}${isNew?`<span class="nw">নতুন</span>`:""}${n>1?`<span class="cnt">${n}টি ছবি</span>`:""}</div>
     <div class="meta"><div><strong>${esc(d.title)}</strong>${dlText}</div>
     <span class="tag ${d.price?"paid":"free"}">${d.price?"৳ "+d.price:"ফ্রি"}</span></div>`;
     el.onclick=()=>openDesign(DESIGNS[i]);
@@ -309,7 +409,14 @@ function openDesign(d){
     <button class="btn" id="send" type="button">WhatsApp-এ পাঠান</button>
     <p id="err" style="color:#B3261E;margin-top:8px" role="alert"></p></div>`;
   }
+  if(d.id != null) h += `<div><button class="btn alt" id="shb" type="button" style="margin-top:12px">শেয়ার করুন</button></div>`;
   $("dbody").innerHTML = h;
+  const sh = $("shb");
+  if(sh) sh.onclick = async () => {
+    const url = location.origin + location.pathname + "?d=" + d.id;
+    if(navigator.share){ try{ await navigator.share({title:d.title, url}); return; }catch(e){ if(e && e.name==="AbortError") return; } }
+    try{ await navigator.clipboard.writeText(url); sh.textContent = "লিংক কপি হয়েছে"; }catch(e){ prompt("এই লিংক কপি করুন:", url); }
+  };
   if(!d.price){
     $("dlb").addEventListener("click",()=>countDl(d));
   }
@@ -329,25 +436,34 @@ function openDesign(d){
 }
 $("x").onclick=()=>$("dlg").close();
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
-renderTabs();renderGrid();
+renderTabs();renderGrid();renderAbout();renderOrder();renderVideos();
+$("q").oninput = () => { Q = $("q").value; shown = PAGE; renderGrid(); };
+$("mb").onclick = () => { shown += PAGE; renderGrid(); };
 if(sbc){
   const ALL = CATEGORIES[0];
+  try{
+    if(!/[?&]preview=1/.test(location.search) && !sessionStorage.getItem("vc")){
+      sessionStorage.setItem("vc","1");
+      sbc.rpc("increment_visit").then(()=>{},()=>{});
+    }
+  }catch(e){}
   Promise.all([
     sbc.from("designs").select("*").order("created_at",{ascending:false}),
     sbc.from("categories").select("name").order("pos").order("id"),
     sbc.from("site_settings").select("*")
   ]).then(([d,c,s])=>{
-    /* অ্যাডমিন থেকে সেট করা ব্যানার/ব্যাকগ্রাউন্ড ছবি */
-    if(!s.error && s.data){
-      const bg = s.data.find(x=>x.key==="site_bg");
-      if(bg && bg.value) document.querySelector(".banner").style.background = `url("${bg.value}") center/cover no-repeat, linear-gradient(160deg,#14573F,#0A2E22)`;
-    }
+    if(!s.error && s.data) applySettings(s.data);
     if(!c.error && c.data && c.data.length) CATEGORIES = [ALL, ...c.data.map(x=>x.name)];
-    if(!d.error && d.data) DESIGNS = d.data.map(x=>({...x, category:OLD_NAMES[x.category]||x.category}));
+    if(!d.error && d.data){
+      DESIGNS = d.data.filter(x=>!x.hidden).map(x=>({...x, category:OLD_NAMES[x.category]||x.category}));
+      DESIGNS.sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+    }
     /* ক্যাটাগরি তালিকায় নেই এমন ক্যাটাগরির ডিজাইন থাকলে সেটাও ট্যাবে দেখাবে */
     DESIGNS.forEach(x => { if(x.category && !CATEGORIES.includes(x.category)) CATEGORIES.push(x.category); });
     if(!CATEGORIES.includes(current)) current = ALL;
     renderTabs(); renderGrid();
+    const qd = new URLSearchParams(location.search).get("d");
+    if(qd){ const dd = DESIGNS.find(x=>String(x.id)===qd); if(dd) openDesign(dd); }
   }).catch(()=>{});
 }
 </script>

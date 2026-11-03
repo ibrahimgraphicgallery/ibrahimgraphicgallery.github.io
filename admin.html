@@ -16,7 +16,7 @@ body{background:var(--bg);color:var(--ink);font:400 17px/1.6 "Hind Siliguri",sys
 h1,h2{font-family:"Noto Serif Bengali",Georgia,serif;font-weight:800;line-height:1.4;margin-bottom:10px}
 h1{font-size:26px}h2{font-size:20px}
 label{display:block;margin-top:12px;font-size:15px;color:var(--mut)}
-input,select{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+input,select,textarea{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
 input[type=color]{padding:2px;height:42px}
 input[type=range]{padding:0}
 .chk{display:flex;gap:8px;align-items:center;color:var(--ink)}.chk input{width:auto}
@@ -27,7 +27,14 @@ button.sm{padding:6px 14px;font-size:15px;margin:0}
 .row{display:flex;gap:12px;align-items:center;border-top:1px solid var(--line);padding:12px 0}
 .row img{width:56px;height:70px;object-fit:cover;border-radius:6px;background:var(--line)}
 .row .in{flex:1;min-width:0}
-.acts{display:flex;flex-direction:column;gap:6px}
+.acts{display:grid;grid-template-columns:auto auto;gap:6px}
+.acts button{padding:5px 10px;font-size:14px}
+textarea{resize:vertical;min-height:90px;line-height:1.5}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.stat div{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font:800 22px/1.2 'Noto Serif Bengali',serif}
+.stat small{color:var(--mut)}
+.vrow{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:6px 0;font-size:15px}
 .del{background:transparent;color:var(--red);border:1.5px solid var(--red);margin:0;padding:6px 14px;font-size:15px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -141,6 +148,31 @@ dialog.wide[open]{display:flex;flex-direction:column}
       <button id="bgs" type="button">ওয়েবসাইটে লাগান</button>
       <button class="alt" id="bgr" type="button" style="margin-top:16px">ডিফল্টে ফিরুন</button>
       <p class="msg" id="bm" role="status"></p>
+    </details>
+    <details id="dctc">
+      <summary>যোগাযোগ ও সোশ্যাল লিংক</summary>
+      <label for="c_wa">WhatsApp নম্বর (যেমন 017XXXXXXXX)</label><input id="c_wa" inputmode="tel">
+      <label for="c_pay">bKash / Nagad নম্বর (পেমেন্টের জন্য সাইটে দেখায়)</label><input id="c_pay" inputmode="tel">
+      <label for="c_fb">Facebook লিংক</label><input id="c_fb" type="url" placeholder="https://">
+      <label for="c_yt">YouTube লিংক</label><input id="c_yt" type="url" placeholder="https://">
+      <label for="c_tg">Telegram লিংক</label><input id="c_tg" type="url" placeholder="https://">
+      <p class="msg">কোনো লিংক ফাঁকা রাখলে সাইটে সেটা দেখাবে না।</p>
+      <button id="cts" type="button">সেভ করুন</button>
+      <p class="msg" id="ctm" role="status"></p>
+    </details>
+    <details id="dcnt">
+      <summary>সাইটের পরিচিতি, সার্ভিস ও ভিডিও</summary>
+      <label for="t_ab">আমার সম্পর্কে (সাইটে নামের নিচে দেখায়)</label><textarea id="t_ab" rows="3"></textarea>
+      <label for="t_sv">কাস্টম অর্ডারের সার্ভিস (প্রতি লাইনে একটা। দাম দিতে চাইলে এভাবে: মাহফিল পোস্টার | ৫০০)</label><textarea id="t_sv" rows="5"></textarea>
+      <label for="t_vd">কাজের ভিডিও (প্রতি লাইনে একটা YouTube ভিডিও লিংক)</label><textarea id="t_vd" rows="4" placeholder="https://youtu.be/..."></textarea>
+      <button id="tcs" type="button">সেভ করুন</button>
+      <p class="msg" id="tcm" role="status"></p>
+    </details>
+    <details id="dvis">
+      <summary>সাইটের ভিজিট</summary>
+      <div class="stat"><div><b id="v_t">–</b><small>আজ</small></div><div><b id="v_w">–</b><small>গত ৭ দিন</small></div><div><b id="v_a">–</b><small>মোট</small></div></div>
+      <div id="v_l"></div>
+      <p class="msg" id="vm" role="status"></p>
     </details>
     <details>
       <summary>পাসওয়ার্ড বদলান</summary>
@@ -439,8 +471,8 @@ function renderList(){
   if(so==="ord") a = a.slice().sort((x,y)=>(y.orders||0)-(x.orders||0));
   $("list").innerHTML = a.map(d => {
     const im = imgsOf(d);
-    return `<div class="row"><img src="${esc(im[0])}" alt=""><div class="in"><b>${esc(d.title)}</b> ${im.length>1?`<span class="pill">${im.length}টি ছবি</span>`:""}<br><small>${esc(d.category)} · ${d.price?"৳ "+d.price:"ফ্রি"}</small><br><small><b>${d.price?"WhatsApp অর্ডার ক্লিক: "+(d.orders||0):"ডাউনলোড: "+(d.downloads||0)}</b></small></div>
-    <div class="acts"><button class="sm" type="button" data-a="ed" data-id="${d.id}">এডিট</button><button class="del" type="button" data-a="dl" data-id="${d.id}">মুছুন</button></div></div>`;
+    return `<div class="row"><img src="${esc(im[0])}" alt=""><div class="in"><b>${esc(d.title)}</b> ${d.pinned?'<span class="pill">📌 পিন</span> ':""}${d.hidden?'<span class="pill">লুকানো</span> ':""}${im.length>1?`<span class="pill">${im.length}টি ছবি</span>`:""}<br><small>${esc(d.category)} · ${d.price?"৳ "+d.price:"ফ্রি"}</small><br><small><b>${d.price?"WhatsApp অর্ডার ক্লিক: "+(d.orders||0):"ডাউনলোড: "+(d.downloads||0)}</b></small></div>
+    <div class="acts"><button class="sm" type="button" data-a="ed" data-id="${d.id}">এডিট</button><button class="del" type="button" data-a="dl" data-id="${d.id}">মুছুন</button><button class="alt sm" type="button" data-a="pin" data-id="${d.id}">${d.pinned?"আনপিন":"পিন"}</button><button class="alt sm" type="button" data-a="hid" data-id="${d.id}">${d.hidden?"দেখান":"লুকান"}</button></div></div>`;
   }).join("") || "<p class='msg'>" + (DES.length ? "এই ফিল্টারে কিছু পাওয়া যায়নি।" : "এখনো কোনো ডিজাইন নেই।") + "</p>";
   $("tot").textContent = `দেখাচ্ছে ${a.length}/${DES.length}টি · মোট ফ্রি ডাউনলোড: ${DES.reduce((s,d)=>s+(d.downloads||0),0)} · মোট WhatsApp অর্ডার ক্লিক: ${DES.reduce((s,d)=>s+(d.orders||0),0)}`;
 }
@@ -449,6 +481,12 @@ $("list").onclick = async e => {
   const b = e.target.closest("button"); if(!b) return;
   const d = DES.find(x => String(x.id)===b.dataset.id); if(!d) return;
   if(b.dataset.a==="ed") return openEdit(d);
+  if(b.dataset.a==="pin" || b.dataset.a==="hid"){
+    const f = b.dataset.a==="pin" ? "pinned" : "hidden";
+    const r = await sb.from("designs").update({[f]: !d[f]}).eq("id", d.id);
+    if(r.error){ alert("সমস্যা: " + r.error.message + "\n(designs টেবিলে pinned/hidden কলাম লাগবে, setup.sql একবার চালান)"); return; }
+    return loadList();
+  }
   if(!confirm("এই ডিজাইনটা মুছে ফেলবেন?")) return;
   const im = imgsOf(d); if(im.length) await sb.storage.from("previews").remove(im.map(fname));
   await sb.from("designs").delete().eq("id", d.id);
@@ -527,10 +565,68 @@ async function upSite(file, prefix, max, square){
 }
 const saveKey = (key, value) => sb.from("site_settings").upsert({key, value});
 function dropOld(u){ if(u && fname(u).startsWith("site-")) sb.storage.from("previews").remove([fname(u)]).then(()=>{},()=>{}); }
+const DEF_C = {
+  wa_number:"01871979783", pay_number:"01871979783",
+  facebook:"https://www.facebook.com/profile.php?id=61550563245668",
+  youtube:"https://youtube.com/channel/UCxXUoL4_Op-00IWiEdxzi7A?si=WfBuJ5EjYGXq7VCg",
+  telegram:"https://t.me/ibrahimgraphicgallary",
+  about_text:"ইসলামিক দাওয়াতপত্র, মাহফিল পোস্টার ও ব্যানার ডিজাইন করি। আপনার প্রয়োজনের কাজ আমাকে জানান।",
+  services:"ইসলামিক দাওয়াতপত্র\nমাহফিল পোস্টার\nব্যানার ডিজাইন\nলোগো ডিজাইন",
+  videos:""
+};
+const val = k => SS[k] !== undefined && SS[k] !== null ? SS[k] : DEF_C[k];
+function paintContent(){
+  $("c_wa").value = val("wa_number"); $("c_pay").value = val("pay_number");
+  $("c_fb").value = val("facebook"); $("c_yt").value = val("youtube"); $("c_tg").value = val("telegram");
+  $("t_ab").value = val("about_text"); $("t_sv").value = val("services"); $("t_vd").value = val("videos");
+}
+const ytId = u => { const m = String(u||"").match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/|live\/)([\w-]{11})/); return m ? m[1] : ""; };
+async function saveMany(o){
+  const r = await sb.from("site_settings").upsert(Object.entries(o).map(([key,value]) => ({key, value})));
+  if(r.error) throw r.error;
+  Object.assign(SS, o);
+}
+$("cts").onclick = async () => {
+  const m = $("ctm"); m.className = "msg";
+  const o = {wa_number:$("c_wa").value.trim(), pay_number:$("c_pay").value.trim(), facebook:$("c_fb").value.trim(), youtube:$("c_yt").value.trim(), telegram:$("c_tg").value.trim()};
+  if(o.wa_number && o.wa_number.replace(/\D/g,"").length < 10){ m.className = "msg err"; m.textContent = "WhatsApp নম্বর সঠিক নয়।"; return; }
+  for(const k of ["facebook","youtube","telegram"]) if(o[k] && !/^https?:\/\//i.test(o[k])){ m.className = "msg err"; m.textContent = "লিংক https:// দিয়ে শুরু হতে হবে।"; return; }
+  $("cts").disabled = true;
+  try{ await saveMany(o); m.textContent = "সেভ হয়েছে, সাইটে অটো বদলে যাবে।"; }
+  catch(e){ m.className = "msg err"; m.textContent = "সমস্যা: " + (e.message||e); }
+  $("cts").disabled = false;
+};
+$("tcs").onclick = async () => {
+  const m = $("tcm"); m.className = "msg";
+  const o = {about_text:$("t_ab").value.trim(), services:$("t_sv").value.trim(), videos:$("t_vd").value.trim()};
+  const lines = o.videos.split("\n").map(x=>x.trim()).filter(Boolean), good = lines.filter(x=>ytId(x));
+  $("tcs").disabled = true;
+  try{
+    await saveMany(o);
+    m.textContent = "সেভ হয়েছে।" + (lines.length ? " ভিডিও: " + good.length + "টি চিনতে পেরেছি" + (good.length<lines.length ? ", " + (lines.length-good.length) + "টি লিংক ভুল (বাদ গেছে)" : "") + "।" : "");
+    if(good.length < lines.length) m.className = "msg err";
+  }catch(e){ m.className = "msg err"; m.textContent = "সমস্যা: " + (e.message||e); }
+  $("tcs").disabled = false;
+};
+async function loadVisits(){
+  const m = $("vm"); m.className = "msg"; m.textContent = "";
+  const r = await sb.from("site_visits").select("*").order("day",{ascending:false}).limit(400);
+  if(r.error){ m.className = "msg err"; m.textContent = "site_visits টেবিল নেই। setup.sql একবার চালান।"; return; }
+  const rows = r.data || [];
+  const t = new Date().toISOString().slice(0,10), w0 = new Date(Date.now() - 6*864e5).toISOString().slice(0,10);
+  const sum = a => a.reduce((s,x)=>s+(x.count||0),0);
+  $("v_t").textContent = sum(rows.filter(x=>x.day===t));
+  $("v_w").textContent = sum(rows.filter(x=>x.day>=w0));
+  $("v_a").textContent = sum(rows);
+  $("v_l").innerHTML = rows.slice(0,7).map(x=>`<div class="vrow"><span>${esc(x.day)}</span><b>${x.count}</b></div>`).join("");
+  m.textContent = rows.length ? "দিনের হিসাব সার্ভারের সময় (UTC) অনুযায়ী।" : "এখনো কোনো ভিজিট গোনা হয়নি।";
+}
+$("dvis").addEventListener("toggle", () => { if($("dvis").open) loadVisits(); });
 function paintSite(){
   const n = SS.admin_name || DEF_NAME;
   $("pn").value = n; $("pname").textContent = n;
   $("pav").innerHTML = SS.admin_photo ? `<img src="${esc(SS.admin_photo)}" alt="প্রোফাইল ছবি">` : esc(n.trim().charAt(0).toUpperCase());
+  paintContent();
   $("bgp").style.backgroundImage = SS.site_bg ? `url("${SS.site_bg}")` : `url("hero.jpg"), linear-gradient(160deg,#14573F,#0A2E22)`;
 }
 async function loadSite(){
@@ -574,7 +670,7 @@ $("bgr").onclick = async () => {
   if(r.error){ m.className = "msg err"; m.textContent = "সমস্যা: " + r.error.message; return; }
   dropOld(SS.site_bg); SS.site_bg = ""; paintSite(); m.textContent = "ডিফল্ট ব্যাকগ্রাউন্ডে ফেরানো হয়েছে।";
 };
-const fr = $("pfr"), reload = () => { fr.src = "index.html?v=" + Date.now(); };
+const fr = $("pfr"), reload = () => { fr.src = "index.html?preview=1&v=" + Date.now(); };
 $("pvb").onclick = () => { reload(); $("pvd").showModal(); };
 $("pvx").onclick = () => { $("pvd").close(); fr.src = "about:blank"; };
 $("pvr").onclick = reload;
