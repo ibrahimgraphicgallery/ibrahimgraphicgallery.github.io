@@ -298,7 +298,10 @@ function renderTabs(){
   });
   window.addEventListener("pointerup",()=>{down=false;t.classList.remove("drag");setTimeout(()=>{moved=false},0)});
   t.addEventListener("wheel",e=>{
-    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){t.scrollLeft+=e.deltaY;e.preventDefault()}
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){
+      const max=t.scrollWidth-t.clientWidth,nx=t.scrollLeft+e.deltaY;
+      if(max>0&&nx>=0&&nx<=max){t.scrollLeft=nx;e.preventDefault()}
+    }
   },{passive:false});
   t.addEventListener("scroll",updArr);
   window.addEventListener("resize",updArr);
@@ -343,7 +346,7 @@ function renderGrid(){
     const i = DESIGNS.indexOf(d);
     const n = imgsOf(d).length;
     const isNew = d.created_at && (Date.now() - new Date(d.created_at).getTime()) < 14*864e5;
-    const dlText = (d.downloads||0) > 0 ? `<br><span class="dl">↓ ${d.downloads} ডাউনলোড</span>` : "";
+    const dlText = (!d.price && (d.downloads||0) > 0) ? `<br><span class="dl">↓ ${d.downloads} ডাউনলোড</span>` : "";
     const el=document.createElement("button");
     el.className="card";el.dataset.i=i;
     el.innerHTML=`<div class="pv">${pv(d)}${isNew?`<span class="nw">নতুন</span>`:""}${n>1?`<span class="cnt">${n}টি ছবি</span>`:""}</div>
@@ -387,6 +390,11 @@ $("dlg").addEventListener("keydown", e => {
   });
 })();
 function countDl(d){
+  if(d.price){
+    d.orders=(d.orders||0)+1;
+    if(sbc&&d.id!=null)sbc.rpc("increment_orders",{design_id:String(d.id)}).then(()=>{},()=>{});
+    return;
+  }
   d.downloads=(d.downloads||0)+1;renderGrid();
   if(sbc&&d.id!=null)sbc.rpc("increment_downloads",{design_id:String(d.id)}).then(()=>{},()=>{});
 }

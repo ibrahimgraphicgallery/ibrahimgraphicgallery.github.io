@@ -488,8 +488,10 @@ $("list").onclick = async e => {
     return loadList();
   }
   if(!confirm("এই ডিজাইনটা মুছে ফেলবেন?")) return;
-  const im = imgsOf(d); if(im.length) await sb.storage.from("previews").remove(im.map(fname));
-  await sb.from("designs").delete().eq("id", d.id);
+  const im = imgsOf(d);
+  const dr = await sb.from("designs").delete().eq("id", d.id);
+  if(dr.error){ alert("সমস্যা: " + dr.error.message); return; }
+  if(im.length) sb.storage.from("previews").remove(im.map(fname)).then(()=>{},()=>{});
   loadList();
 };
 
