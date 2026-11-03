@@ -31,14 +31,17 @@ header.top{display:flex;justify-content:space-between;align-items:center;padding
 .hero{padding:30px 0 12px}
 .hero h1{font:800 clamp(26px,4.6vw,44px)/1.45 var(--serif);max-width:24em}
 .hero p{color:var(--mut);margin-top:14px;max-width:52ch}
-.catmenu{position:relative;padding:18px 0 14px;border-bottom:2px solid var(--line)}
+.filterbar{position:relative;display:flex;align-items:center;gap:12px;margin-top:22px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+.filterbar .search{margin-top:0;flex:1;min-width:0}
+.catmenu{flex:0 1 auto;min-width:0;max-width:50%}
+@media (max-width:520px){.filterbar{gap:8px}.catbtn{padding:10px 12px;font-size:15px;gap:8px}.catbtn i{display:none}.filterbar .search input{padding-left:40px}.filterbar .search svg{left:14px}}
 .catbtn{display:flex;align-items:center;gap:10px;font:600 17px var(--sans);color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 16px;cursor:pointer;max-width:100%}
 .catbtn:hover,.catbtn[aria-expanded=true]{border-color:var(--gold)}
 .catbtn svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 .catbtn b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .catbtn i{font-style:normal;color:var(--gold);font-size:14px;transition:transform .15s}
 .catbtn[aria-expanded=true] i{transform:rotate(180deg)}
-.catpanel{position:absolute;left:0;top:calc(100% - 8px);z-index:30;width:min(100%,380px);max-height:min(70vh,520px);overflow:auto;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 14px 34px rgba(0,0,0,.14)}
+.catpanel{position:absolute;left:0;top:calc(100% - 10px);z-index:30;width:min(100%,380px);max-height:min(70vh,520px);overflow:auto;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 14px 34px rgba(0,0,0,.14)}
 .catpanel[hidden]{display:none}
 .catitem{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;font:500 16px var(--sans);color:var(--ink);background:transparent;border:0;border-radius:10px;padding:11px 12px;cursor:pointer}
 .catitem:hover{background:var(--bg)}
@@ -158,10 +161,12 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
       <a class="btn" id="abw" target="_blank" rel="noopener">WhatsApp-এ মেসেজ করুন</a>
     </div>
   </section>
-  <div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" type="search" placeholder="ডিজাইনের নাম দিয়ে খুঁজুন" aria-label="ডিজাইন খুঁজুন" autocomplete="off"></div>
+  <div class="filterbar">
   <div class="catmenu" id="catmenu">
     <button class="catbtn" id="catbtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="catpanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><b id="catname"></b><i aria-hidden="true">▾</i></button>
     <div class="catpanel" id="catpanel" role="menu" aria-label="ক্যাটাগরি" hidden></div>
+  </div>
+  <div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" type="search" placeholder="ডিজাইন খুঁজুন" aria-label="ডিজাইন খুঁজুন" autocomplete="off"></div>
   </div>
   <main class="grid" id="grid"></main>
   <div class="more" id="more" hidden><button class="btn alt" id="mb" type="button">আরও দেখুন</button></div>
