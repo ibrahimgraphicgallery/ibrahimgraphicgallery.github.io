@@ -28,7 +28,7 @@ header.top{display:flex;justify-content:space-between;align-items:center;padding
 .brand{font:800 18px/1.2 var(--serif)}
 .contact{font-size:15px;text-decoration:none;border:1.5px solid var(--green);color:var(--green);padding:6px 14px;border-radius:999px}
 .banner{margin-top:8px;aspect-ratio:16/7;border-radius:6px 28px 6px 28px;background:url(hero.jpg) center/cover no-repeat,linear-gradient(160deg,#14573F,#0A2E22)}
-.hero{padding:30px 0 12px}
+.hero{padding:20px 0 12px}
 .hero h1{font:800 clamp(26px,4.6vw,44px)/1.45 var(--serif);max-width:24em}
 .hero p{color:var(--mut);margin-top:14px;max-width:52ch}
 .filterbar{position:relative;display:flex;align-items:center;gap:12px;margin-top:22px;padding-bottom:16px;border-bottom:2px solid var(--line)}
@@ -116,10 +116,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
 .search{position:relative;margin-top:22px}
 .search input{padding:12px 16px 12px 46px;border-radius:999px;font-size:16px}
 .search svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mut);fill:none;stroke-width:2;stroke-linecap:round;pointer-events:none}
-.about{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:6px 22px 6px 22px;padding:18px 20px}
-.abav{flex:none;width:84px;height:84px;border-radius:50%;overflow:hidden;background:var(--green);color:var(--on);display:grid;place-items:center;font:800 34px/1 var(--serif);border:3px solid var(--line)}
+.about{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-top:0;padding:0 4px}
+.abav{flex:none;position:relative;z-index:1;width:112px;height:112px;margin-top:-52px;border-radius:50%;overflow:hidden;background:var(--green);color:var(--on);display:grid;place-items:center;font:800 44px/1 var(--serif);border:4px solid var(--bg);box-shadow:0 2px 12px rgba(0,0,0,.18)}
 .abav img{width:100%;height:100%;object-fit:cover;display:block}
-.abt{flex:1;min-width:150px}
+.abt{flex:1;min-width:150px;padding-top:12px}
+@media (max-width:520px){.about{gap:14px}.abav{width:92px;height:92px;margin-top:-44px;font-size:36px}}
 .abt h2{font:800 20px/1.4 var(--serif)}
 .abt p{color:var(--mut);margin-top:4px}
 .abt .btn{margin-top:10px;padding:8px 18px;font-size:15px}
@@ -149,10 +150,6 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
     <a class="contact" id="wa" target="_blank" rel="noopener">WhatsApp-এ যোগাযোগ</a>
   </header>
   <div class="banner" role="img" aria-label="ইব্রাহীম গ্রাফিক্স গ্যালারী"></div>
-  <section class="hero">
-    <h1 id="hh">ইব্রাহীম গ্রাফিক্স গ্যালারিতে পেয়ে যাচ্ছেন নান্দনিক সব ডিজাইন, সহজে হাতের মুঠোয়</h1>
-    <p id="hp">ডিজাইনের কাজ সহজ করুন, তৈরিকৃত Illustrator ও Photoshop ফাইল নিন।</p>
-  </section>
   <section class="about" id="about" aria-label="পরিচিতি">
     <div class="abav" id="abav"></div>
     <div class="abt">
@@ -160,6 +157,10 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
       <p id="abt"></p>
       <a class="btn" id="abw" target="_blank" rel="noopener">WhatsApp-এ মেসেজ করুন</a>
     </div>
+  </section>
+  <section class="hero">
+    <h1 id="hh">ইব্রাহীম গ্রাফিক্স গ্যালারিতে পেয়ে যাচ্ছেন নান্দনিক সব ডিজাইন, সহজে হাতের মুঠোয়</h1>
+    <p id="hp">ডিজাইনের কাজ সহজ করুন, তৈরিকৃত Illustrator ও Photoshop ফাইল নিন।</p>
   </section>
   <div class="filterbar">
   <div class="catmenu" id="catmenu">
