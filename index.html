@@ -282,6 +282,11 @@ function applySettings(rows){
   SS = {}; rows.forEach(x => SS[x.key] = x.value);
   if(SS.wa_number && waNum(SS.wa_number)) SITE.whatsapp = waNum(SS.wa_number);
   if(SS.pay_number) SITE.number = String(SS.pay_number).trim();
+  if(SS.site_name && String(SS.site_name).trim()){
+    SITE.name = String(SS.site_name).trim();
+    $("brand").textContent = SITE.name;
+    $("foot").textContent = "© " + new Date().getFullYear() + " " + SITE.name + ". সব ডিজাইনের স্বত্ব সংরক্ষিত।";
+  }
   ["facebook","youtube","telegram"].forEach(k => { if(SS[k] !== undefined && SS[k] !== null) SITE[k] = String(SS[k]).trim(); });
   if(SS.site_bg) document.querySelector(".banner").style.background = `url("${SS.site_bg}") center/cover no-repeat, linear-gradient(160deg,#14573F,#0A2E22)`;
   buildLinks(); renderAbout(); renderHero(); renderOrder(); renderVideos();
