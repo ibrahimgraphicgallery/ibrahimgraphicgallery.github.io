@@ -29,8 +29,10 @@ header.top{display:flex;justify-content:space-between;align-items:center;padding
 .contact{font-size:15px;text-decoration:none;border:1.5px solid var(--green);color:var(--green);padding:6px 14px;border-radius:999px}
 .banner{margin-top:8px;aspect-ratio:16/7;border-radius:6px 28px 6px 28px;background:url(hero.jpg) center/cover no-repeat,linear-gradient(160deg,#14573F,#0A2E22)}
 .hero{padding:20px 0 12px}
-.hero h1{font:800 clamp(26px,4.6vw,44px)/1.45 var(--serif);max-width:24em}
-.hero p{color:var(--mut);margin-top:14px;max-width:52ch}
+.hero h1{font:800 clamp(26px,4.6vw,44px)/1.45 var(--serif);font-size:calc(clamp(26px,4.6vw,44px)*var(--hs,1));max-width:24em}
+.hero p{color:var(--mut);margin-top:14px;max-width:52ch;font-size:calc(17px*var(--ps,1))}
+.hero [data-al=center]{text-align:center;margin-left:auto;margin-right:auto}
+.hero [data-al=right]{text-align:right;margin-left:auto}
 .filterbar{position:relative;display:flex;align-items:center;gap:12px;margin-top:22px;padding-bottom:16px;border-bottom:2px solid var(--line)}
 .filterbar .search{margin-top:0;flex:1;min-width:0}
 .catmenu{flex:0 1 auto;min-width:0;max-width:50%}
@@ -273,6 +275,14 @@ function renderAbout(){
   setWa();
 }
 function renderHero(){
+  /* লেখার সাইজ (%) ও অবস্থান: অ্যাডমিন থেকে বদলানো যায় */
+  const hero = document.querySelector(".hero");
+  const sz = (v,d) => { const n = parseFloat(v); return n>=40 && n<=200 ? n/100 : d; };
+  const al = v => ["left","center","right"].includes(v) ? v : "left";
+  hero.style.setProperty("--hs", sz(SS.hero_title_size,1));
+  hero.style.setProperty("--ps", sz(SS.hero_sub_size,1));
+  $("hh").dataset.al = al(SS.hero_title_align);
+  $("hp").dataset.al = al(SS.hero_sub_align);
   /* হোম পেজের বড় লেখা ও ছোট লেখা: অ্যাডমিন থেকে বদলানো যায়। ফাঁকা ছোট লেখা লুকিয়ে যায়, ফাঁকা বড় লেখা হলে ডিফল্ট থাকে */
   const t = String(SS.hero_title||"").trim();
   if(t) $("hh").textContent = t;
