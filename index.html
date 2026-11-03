@@ -24,9 +24,10 @@ body{background:var(--bg);color:var(--ink);font:400 17px/1.7 var(--sans);padding
 a{color:inherit}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
-header.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:12px}
+header.top{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:14px 20px;gap:12px;color:#fff;border-radius:6px 22px 6px 22px;background:radial-gradient(120% 160% at 100% 0%,rgba(227,178,74,.22),transparent 55%),linear-gradient(160deg,#14573F,#0A2E22)}
 .brand{font:800 18px/1.2 var(--serif)}
-.contact{font-size:15px;text-decoration:none;border:1.5px solid var(--green);color:var(--green);padding:6px 14px;border-radius:999px}
+.contact{font-size:15px;text-decoration:none;border:1.5px solid #fff;color:#fff;padding:6px 14px;border-radius:999px;transition:background .2s}
+.contact:hover{background:rgba(255,255,255,.16)}
 .banner{margin-top:8px;aspect-ratio:16/7;border-radius:6px 28px 6px 28px;background:url(hero.jpg) center/cover no-repeat,linear-gradient(160deg,#14573F,#0A2E22)}
 .hero{padding:20px 0 12px}
 .hero h1{font:800 clamp(26px,4.6vw,44px)/1.45 var(--serif);font-size:calc(clamp(26px,4.6vw,44px)*var(--hs,1));max-width:24em}
