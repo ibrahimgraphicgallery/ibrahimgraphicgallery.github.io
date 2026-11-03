@@ -112,6 +112,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
 .order,.vids{margin:8px 0 44px}
 .order h2,.vids h2{font:800 clamp(22px,3.2vw,30px)/1.5 var(--serif)}
 .order>p{color:var(--mut);margin-top:6px;max-width:58ch}
+.svcs[hidden]{display:none}
 .svcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:20px}
 .svc{background:var(--card);border:1px solid var(--line);border-radius:6px 22px 6px 22px;padding:18px;display:flex;flex-direction:column;gap:6px}
 .svc b{font:600 18px/1.4 var(--sans)}
@@ -155,7 +156,8 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
   <section class="order" id="order" aria-labelledby="oh">
     <h2 id="oh">আপনার জন্য কাস্টম ডিজাইন চান?</h2>
     <p>পছন্দের কাজটা বেছে নিয়ে WhatsApp-এ জানান। আপনার প্রয়োজন অনুযায়ী ডিজাইন করে দেওয়া হবে।</p>
-    <div class="svcs" id="svcs"></div>
+    <a class="btn" id="owa" target="_blank" rel="noopener">WhatsApp-এ জানান</a>
+    <div class="svcs" id="svcs" hidden></div>
   </section>
   <section class="vids" id="vids" aria-labelledby="vh" hidden>
     <h2 id="vh">আমার কাজের ভিডিও</h2>
@@ -252,8 +254,10 @@ function renderAbout(){
   setWa();
 }
 function renderOrder(){
-  let list = SS.services === undefined ? DEF_SERVICES.map(n=>({n,p:""})) : parseServices(SS.services);
-  $("order").hidden = !list.length;
+  /* অ্যাডমিন থেকে সার্ভিস না দিলে কার্ড দেখাবে না, শুধু নিচের WhatsApp বাটন থাকবে */
+  const list = SS.services === undefined ? [] : parseServices(SS.services);
+  $("owa").href = waLink("আসসালামু আলাইকুম। আমি একটা কাস্টম ডিজাইন করাতে চাই।");
+  $("svcs").hidden = !list.length;
   $("svcs").innerHTML = list.map(x=>`<div class="svc"><b>${esc(x.n)}</b><span class="pr">${x.p?"শুরু ৳ "+esc(x.p):"দাম জানতে মেসেজ করুন"}</span><a class="btn alt" href="${esc(waLink('আসসালামু আলাইকুম। আমি "'+x.n+'" ডিজাইন করাতে চাই।'))}" target="_blank" rel="noopener">WhatsApp-এ অর্ডার করুন</a></div>`).join("");
 }
 function renderVideos(){

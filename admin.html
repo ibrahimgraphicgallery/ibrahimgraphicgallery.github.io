@@ -163,7 +163,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
     <details id="dcnt">
       <summary>সাইটের পরিচিতি, সার্ভিস ও ভিডিও</summary>
       <label for="t_ab">আমার সম্পর্কে (সাইটে নামের নিচে দেখায়)</label><textarea id="t_ab" rows="3"></textarea>
-      <label for="t_sv">কাস্টম অর্ডারের সার্ভিস (প্রতি লাইনে একটা। দাম দিতে চাইলে এভাবে: মাহফিল পোস্টার | ৫০০)</label><textarea id="t_sv" rows="5"></textarea>
+      <label for="t_sv">কাস্টম অর্ডারের সার্ভিস কার্ড (প্রতি লাইনে একটা। দাম দিতে চাইলে এভাবে: মাহফিল পোস্টার | ৫০০। যোগ করতে নতুন লাইন লিখুন, মুছতে লাইনটা কেটে দিন। একদম ফাঁকা রাখলে কোনো কার্ড দেখাবে না, শুধু WhatsApp বাটন থাকবে)</label><textarea id="t_sv" rows="5" placeholder="মাহফিল পোস্টার | ৫০০&#10;ব্যানার ডিজাইন"></textarea>
       <label for="t_vd">কাজের ভিডিও (প্রতি লাইনে একটা YouTube ভিডিও লিংক)</label><textarea id="t_vd" rows="4" placeholder="https://youtu.be/..."></textarea>
       <button id="tcs" type="button">সেভ করুন</button>
       <p class="msg" id="tcm" role="status"></p>
@@ -573,7 +573,7 @@ const DEF_C = {
   youtube:"https://youtube.com/channel/UCxXUoL4_Op-00IWiEdxzi7A?si=WfBuJ5EjYGXq7VCg",
   telegram:"https://t.me/ibrahimgraphicgallary",
   about_text:"ইসলামিক দাওয়াতপত্র, মাহফিল পোস্টার ও ব্যানার ডিজাইন করি। আপনার প্রয়োজনের কাজ আমাকে জানান।",
-  services:"ইসলামিক দাওয়াতপত্র\nমাহফিল পোস্টার\nব্যানার ডিজাইন\nলোগো ডিজাইন",
+  services:"",
   videos:""
 };
 const val = k => SS[k] !== undefined && SS[k] !== null ? SS[k] : DEF_C[k];
