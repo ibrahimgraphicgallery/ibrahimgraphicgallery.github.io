@@ -167,6 +167,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
       <label for="t_hs">তার নিচের ছোট লেখা (ফাঁকা রাখলে দেখাবে না)</label><textarea id="t_hs" rows="2"></textarea>
       <label for="t_ab">আমার সম্পর্কে (সাইটে নামের নিচে দেখায়)</label><textarea id="t_ab" rows="3"></textarea>
       <label for="t_sv">কাস্টম অর্ডারের সার্ভিস কার্ড (প্রতি লাইনে একটা। দাম দিতে চাইলে এভাবে: মাহফিল পোস্টার | ৫০০। যোগ করতে নতুন লাইন লিখুন, মুছতে লাইনটা কেটে দিন। একদম ফাঁকা রাখলে কোনো কার্ড দেখাবে না, শুধু WhatsApp বাটন থাকবে)</label><textarea id="t_sv" rows="5" placeholder="মাহফিল পোস্টার | ৫০০&#10;ব্যানার ডিজাইন"></textarea>
+      <label for="t_vt">ভিডিও অংশের শিরোনাম (ফাঁকা রাখলে শিরোনাম দেখাবে না)</label><input id="t_vt">
       <label for="t_vd">কাজের ভিডিও (প্রতি লাইনে একটা YouTube ভিডিও লিংক)</label><textarea id="t_vd" rows="4" placeholder="https://youtu.be/..."></textarea>
       <button id="tcs" type="button">সেভ করুন</button>
       <p class="msg" id="tcm" role="status"></p>
@@ -579,6 +580,7 @@ const DEF_C = {
   services:"",
   videos:"",
   site_name:"IBRAHIM AHMAD SADI",
+  videos_title:"আমার কাজের ভিডিও",
   hero_title:"ইব্রাহীম গ্রাফিক্স গ্যালারিতে পেয়ে যাচ্ছেন নান্দনিক সব ডিজাইন, সহজে হাতের মুঠোয়",
   hero_sub:"ডিজাইনের কাজ সহজ করুন, তৈরিকৃত Illustrator ও Photoshop ফাইল নিন।"
 };
@@ -586,7 +588,7 @@ const val = k => SS[k] !== undefined && SS[k] !== null ? SS[k] : DEF_C[k];
 function paintContent(){
   $("c_wa").value = val("wa_number"); $("c_pay").value = val("pay_number");
   $("c_fb").value = val("facebook"); $("c_yt").value = val("youtube"); $("c_tg").value = val("telegram");
-  $("t_sn").value = val("site_name"); $("t_ht").value = val("hero_title"); $("t_hs").value = val("hero_sub"); $("t_ab").value = val("about_text"); $("t_sv").value = val("services"); $("t_vd").value = val("videos");
+  $("t_sn").value = val("site_name"); $("t_vt").value = val("videos_title"); $("t_ht").value = val("hero_title"); $("t_hs").value = val("hero_sub"); $("t_ab").value = val("about_text"); $("t_sv").value = val("services"); $("t_vd").value = val("videos");
 }
 const ytId = u => { const m = String(u||"").match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/|live\/)([\w-]{11})/); return m ? m[1] : ""; };
 async function saveMany(o){
@@ -606,7 +608,7 @@ $("cts").onclick = async () => {
 };
 $("tcs").onclick = async () => {
   const m = $("tcm"); m.className = "msg";
-  const o = {site_name:$("t_sn").value.trim() || DEF_C.site_name, hero_title:$("t_ht").value.trim() || DEF_C.hero_title, hero_sub:$("t_hs").value.trim(), about_text:$("t_ab").value.trim(), services:$("t_sv").value.trim(), videos:$("t_vd").value.trim()};
+  const o = {videos_title:$("t_vt").value.trim(), site_name:$("t_sn").value.trim() || DEF_C.site_name, hero_title:$("t_ht").value.trim() || DEF_C.hero_title, hero_sub:$("t_hs").value.trim(), about_text:$("t_ab").value.trim(), services:$("t_sv").value.trim(), videos:$("t_vd").value.trim()};
   const lines = o.videos.split("\n").map(x=>x.trim()).filter(Boolean), good = lines.filter(x=>ytId(x));
   $("tcs").disabled = true;
   try{

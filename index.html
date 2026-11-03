@@ -270,6 +270,11 @@ function renderOrder(){
   $("svcs").innerHTML = list.map(x=>`<div class="svc"><b>${esc(x.n)}</b><span class="pr">${x.p?"শুরু ৳ "+esc(x.p):"দাম জানতে মেসেজ করুন"}</span><a class="btn alt" href="${esc(waLink('আসসালামু আলাইকুম। আমি "'+x.n+'" ডিজাইন করাতে চাই।'))}" target="_blank" rel="noopener">WhatsApp-এ অর্ডার করুন</a></div>`).join("");
 }
 function renderVideos(){
+  /* ভিডিও অংশের শিরোনাম অ্যাডমিন থেকে বদলানো যায়। ফাঁকা দিলে শিরোনাম লুকিয়ে যায় */
+  if(SS.videos_title !== undefined && SS.videos_title !== null){
+    const vt = String(SS.videos_title).trim();
+    $("vh").textContent = vt; $("vh").hidden = !vt;
+  }
   const ids = String(SS.videos||"").split("\n").map(ytId).filter(Boolean);
   $("vids").hidden = !ids.length;
   $("vgrid").innerHTML = ids.map(id=>`<div class="vd" data-id="${id}"><button type="button" style="background-image:url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)" aria-label="ভিডিও চালান"><span class="pl">▶</span></button></div>`).join("");
