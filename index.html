@@ -145,6 +145,16 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
 .vd button{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;margin:0;cursor:pointer;background:#000 center/cover no-repeat}
 .vd .pl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:rgba(0,0,0,.62);display:grid;place-items:center;color:#fff;font-size:24px;padding-left:4px}
 .vd iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* ছবি জুম */
+.dpv img{cursor:zoom-in}
+.dpv:not(.noimg)::after{content:"🔍 জুম";position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.6);color:#fff;font:500 13px/1.6 var(--sans);padding:0 10px;border-radius:999px;pointer-events:none}
+#zm{width:100%;height:100%;max-width:none;max-height:none;margin:0;border-radius:0;background:#000;overflow:hidden}
+#zm::backdrop{background:#000}
+.zst{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;display:grid;place-items:center}
+.zst img{max-width:100%;max-height:100%;will-change:transform;user-select:none;-webkit-user-select:none}
+.zx{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:12px;z-index:3;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;font:600 26px/1 var(--sans);cursor:pointer;display:grid;place-items:center;padding:0 0 3px}
+.zbar{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:8px}
+.zbar button{min-width:46px;height:42px;padding:0 14px;border:0;border-radius:999px;background:rgba(255,255,255,.2);color:#fff;font:600 18px var(--sans);cursor:pointer}
 </style>
 </head>
 <body>
@@ -198,6 +208,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
   <div class="ths" id="ths"></div>
   <div class="dbody" id="dbody"></div>
 </dialog>
+<dialog id="zm" aria-label="ছবি জুম">
+  <button class="zx" id="zc" type="button" aria-label="বন্ধ করুন">×</button>
+  <div class="zbar"><button id="zo" type="button" aria-label="ছোট করুন">−</button><button id="zr" type="button" aria-label="আসল মাপ">100%</button><button id="zi" type="button" aria-label="বড় করুন">+</button></div>
+  <div class="zst" id="zst"><img id="zimg" alt="" draggable="false"></div>
+</dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
@@ -214,7 +229,7 @@ const SITE = {
 };
 /* ক্যাটাগরি এখন অ্যাডমিন প্যানেল থেকে বদলানো যায় (সেটিংস > ক্যাটাগরি ম্যানেজ)।
    ডাটাবেস থেকে না পেলে এই তালিকা দেখাবে। প্রথমটা ("সব ডিজাইন") সবসময় থাকবে। */
-let CATEGORIES = ["সব ডিজাইন", "এডিটেবল Illustrator ফাইল", "এডিটেবল Photoshop ফাইল", "মাহফিল পোস্টার", "মাহফিলের দাওয়াত কার্ড", "ব্যানার ডিজাইন", "থাম্বনেইল ডিজাইন", "লোগো ডিজাইন", "বাংলা প্রিমিয়াম ফন্ট", "পেইড কোর্স", "ক্যানভা প্রো অ্যাকাউন্ট", "অন্যান্য"];
+let CATEGORIES = ["সব ডিজাইন", "এডিটেবল Illustrator ফাইল", "এডিটেবল Photoshop ফাইল", "মাহফিল পোস্টার", "মাহফিলের দাওয়াত কার্ড", "ব্যানার ডিজাইন", "থাম্বনেইল ডিজাইন", "লোগো ডিজাইন", "বাংলা প্রিমিয়াম ফন্ট", "পেইড কোর্স", "ক্যানভা প্রো অ্যাকাউন্ট", "চাবির রিং ডিজাইন", "লিফলেট/ফ্লায়ার ডিজাইন", "অন্যান্য"];
 /* নতুন ডিজাইন যোগ করতে একটা লাইন কপি করে বদলান।
    preview: images ফোল্ডারের ছবির নাম (ছবি না থাকলে সবুজ ব্যাকগ্রাউন্ড দেখাবে)
    images: একাধিক ছবি দিতে চাইলে তালিকা, যেমন images:["images/a.jpg","images/b.jpg"] (না দিলে preview-ই একমাত্র ছবি)
@@ -476,6 +491,48 @@ function openDesign(d){
 }
 $("x").onclick=()=>$("dlg").close();
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
+/* ছবি জুম: চিমটি, হুইল, ডাবল ক্লিক, টেনে সরানো */
+(function(){
+  const zm=$("zm"),st=$("zst"),im=$("zimg"),lab=$("zr"),P=new Map();
+  let s=1,x=0,y=0,d0=0,s0=1;
+  const apply=()=>{
+    const mx=st.clientWidth*s/2,my=st.clientHeight*s/2;
+    x=Math.max(-mx,Math.min(mx,x));y=Math.max(-my,Math.min(my,y));
+    im.style.transform=`translate(${x}px,${y}px) scale(${s})`;
+    lab.textContent=Math.round(s*100)+"%";
+  };
+  const setS=n=>{s=Math.min(6,Math.max(1,n));if(s===1){x=0;y=0}apply()};
+  const reset=()=>{s=1;x=0;y=0;apply()};
+  window.openZoom=src=>{im.src=src;reset();zm.showModal()};
+  $("dpv").addEventListener("click",e=>{
+    const i=e.target.closest("img");
+    if(i&&i.src)openZoom(i.currentSrc||i.src);
+  });
+  $("zc").onclick=()=>zm.close();
+  $("zi").onclick=()=>setS(s*1.5);
+  $("zo").onclick=()=>setS(s/1.5);
+  $("zr").onclick=reset;
+  st.addEventListener("wheel",e=>{e.preventDefault();setS(s*(e.deltaY<0?1.15:1/1.15))},{passive:false});
+  st.addEventListener("dblclick",()=>setS(s>1?1:2.5));
+  st.addEventListener("pointerdown",e=>{
+    st.setPointerCapture(e.pointerId);
+    P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(P.size===2){const [a,b]=[...P.values()];d0=Math.hypot(a.x-b.x,a.y-b.y);s0=s}
+  });
+  st.addEventListener("pointermove",e=>{
+    const p=P.get(e.pointerId);if(!p)return;
+    if(P.size===2){
+      p.x=e.clientX;p.y=e.clientY;
+      const [a,b]=[...P.values()];
+      setS(s0*Math.hypot(a.x-b.x,a.y-b.y)/d0);
+    }else if(s>1){
+      x+=e.clientX-p.x;y+=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;apply();
+    }
+  });
+  const up=e=>P.delete(e.pointerId);
+  st.addEventListener("pointerup",up);
+  st.addEventListener("pointercancel",up);
+})();
 renderTabs();renderGrid();renderAbout();renderOrder();renderVideos();
 $("q").oninput = () => { Q = $("q").value; shown = PAGE; renderGrid(); };
 $("mb").onclick = () => { shown += PAGE; renderGrid(); };
