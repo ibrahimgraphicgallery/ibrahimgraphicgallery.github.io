@@ -150,8 +150,8 @@ footer{border-top:1px solid var(--line);padding:24px 0 36px;color:var(--mut);fon
 .dpv:not(.noimg)::after{content:"🔍 জুম";position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.6);color:#fff;font:500 13px/1.6 var(--sans);padding:0 10px;border-radius:999px;pointer-events:none}
 #zm{width:100%;height:100%;max-width:none;max-height:none;margin:0;border-radius:0;background:#000;overflow:hidden}
 #zm::backdrop{background:#000}
-.zst{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;display:grid;place-items:center}
-.zst img{max-width:100%;max-height:100%;will-change:transform;user-select:none;-webkit-user-select:none}
+.zst{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab}
+.zst img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;will-change:transform;user-select:none;-webkit-user-select:none}
 .zx{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:12px;z-index:3;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;font:600 26px/1 var(--sans);cursor:pointer;display:grid;place-items:center;padding:0 0 3px}
 .zbar{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:8px}
 .zbar button{min-width:46px;height:42px;padding:0 14px;border:0;border-radius:999px;background:rgba(255,255,255,.2);color:#fff;font:600 18px var(--sans);cursor:pointer}
